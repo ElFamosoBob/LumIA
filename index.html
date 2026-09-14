@@ -307,8 +307,28 @@
 
         <div id="unlock-cinematic" class="unlock-cinematic">
             <div class="cinematic-content">
-                <div style="font-size: 1.5rem; color: #4CAF50; letter-spacing: 5px;">ÉNIGME DÉVERROUILLÉE</div>
+
+                <svg class="cine-rig" viewBox="0 0 400 400" aria-hidden="true">
+
+                    <circle class="cine-ticks" cx="200" cy="200" r="152" stroke-dasharray="2 13" />
+                    <circle class="cine-ring cine-ring-1" cx="200" cy="200" r="72" />
+                    <circle class="cine-ring cine-ring-2" cx="200" cy="200" r="106" />
+                    <circle class="cine-dash" cx="200" cy="200" r="132" stroke-dasharray="26 18" />
+                    <circle class="cine-sweep" cx="200" cy="200" r="92" stroke-dasharray="70 510" />
+                    <g class="cine-cross">
+                        <path d="M200,42 V74" />
+                        <path d="M200,326 V358" />
+                        <path d="M42,200 H74" />
+                        <path d="M326,200 H358" />
+                    </g>
+                </svg>
+
+                <div class="cine-bloom" aria-hidden="true"></div>
+                <div class="cine-line" aria-hidden="true"></div>
+
+                <p class="cine-eyebrow">Module déverrouillé</p>
                 <div id="cinematic-tab-name" class="cinematic-title">Nom de l'onglet</div>
+                <p class="cine-status">Accès autorisé</p>
             </div>
         </div>
 
