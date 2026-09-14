@@ -244,7 +244,6 @@ export class ColorsRecognizer {
             this.ctx.beginPath();
             this.ctx.arc(x, y, 3 * scale, 0, 2 * Math.PI);
             this.ctx.fill();
-            7
             //if the circle is a known colors it is red, if not orange.
             if (calibrating) this.drawCircleNumber(index + 1, x, y, scale);
             else if (DEBUG_COLORS) this.drawCircleLabel(circle, x, y, radius, scale);
