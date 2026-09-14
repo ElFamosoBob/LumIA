@@ -1,6 +1,5 @@
 import uiManagerInstance from '../UIManager.js';
 
-import { StartButton } from '../StartButton.js'; //we import the entire class but we only use initStartButtonEvent
 import { Tab } from './Tab.js';
 import { showTimer } from '../TimerUI.js';
 

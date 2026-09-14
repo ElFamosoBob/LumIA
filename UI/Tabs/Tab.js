@@ -28,10 +28,6 @@ export class Tab {
         this.activeOrNot = false;
 
         this.panelVictory = panneauVictory;
-
-        // Un callback optionnel (fonction) à déclencher quand on clique sur cet onglet
-        // Pratique pour dire "Si on clique sur OpenCV, allume la caméra"
-        this.onActivateAction = null;
     }
 
     /**
@@ -73,10 +69,6 @@ export class Tab {
         } else {
             this.panel.classList.add("active");
         }
-        // Si une action spéciale a été configurée pour cet onglet, on la lance
-        if (this.onActivateAction) {
-            this.onActivateAction();
-        }
     }
 
     /**
@@ -114,12 +106,5 @@ export class Tab {
         this.status = ENIGMA_STATUS.RESOLVED;
         this.button.classList.remove("available");
         this.button.classList.add("completed");
-    }
-
-    /**
-     * permits to attach wichever function we like here when the tab opens
-     */
-    defineOpeningAction(fonctionCallback) {
-        this.onActivateAction = fonctionCallback;
     }
 }

@@ -1,12 +1,7 @@
 import { StartButton } from './StartButton.js'; //we import the entire class but we only use initStartButtonEvent
-import { Tab } from './Tabs/Tab.js';
 import { Animations } from './Animations.js';
 import { TabManager } from './Tabs/TabManager.js';
 import { PanelManager } from './PanelUI/PanelManager.js';
-
-import { ENIGMA_IDS } from '../Utils/Constant.js';
-import { HELP_IDS } from '../Utils/Constant.js';
-
 
 import gameEngineInstance from '../GameLogic/GameEngine.js'
 import { TerminalManager } from './TerminalManager.js';

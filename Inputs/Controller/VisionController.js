@@ -16,13 +16,11 @@ export class VisionController {
         this.canvas = canvasElement;   // overlay : le flux webcam est affiché nativement en dessous
         this.ctx = this.canvas.getContext("2d");
 
-        //this.gestureRecognizer = null;
-        //this.lastVideoTime = -1;
         this.webcamRunning = false;
 
         this.currentResults = {
             gestures: [],      // Pour le LsfRecognizer
-            //colors: new Set(),        // Pour le ColorsRecognizer, pas utilisé actuellement
+            colors: new Set(), // Pour le ColorsRecognizer, rempli par updateColors
             markers: [],       // Pour le ArucoRecognizer
             sheetsVisible: []  // Pour le ArucoRecognizer
         };

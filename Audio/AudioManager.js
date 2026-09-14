@@ -17,7 +17,6 @@ class AudioManager {
         this.master = null;
 
         this.volume = 0.8;
-        this.volumeBeforeMute = this.volume;
 
         this.crescendo = new RisingHarmony();
 
@@ -97,13 +96,6 @@ class AudioManager {
 
     stopCrescendo() {
         this.crescendo.stop();
-    }
-
-    // --- Volume général ---
-
-    setVolume(volume) {
-        this.volume = Math.min(1, Math.max(0, volume));
-        if (this.master) this.master.gain.value = this.volume;
     }
 
 }

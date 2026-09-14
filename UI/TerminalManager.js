@@ -136,13 +136,4 @@ export class TerminalManager {
         console.log("Le terminal est maintenant affiché");
     }
 
-    /**
-     * NOUVELLE FONCTION : Recache le bouton si besoin
-     */
-    hideTerminalButton() {
-        if (this.btnOpen) {
-            this.btnOpen.style.display = 'none';
-        }
-    }
-
 }

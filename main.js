@@ -29,10 +29,4 @@ window.addEventListener("DOMContentLoaded", async () => {
             gameEngineInstance.start();
         });
     }, { once: true });
-
-    // Un bouton pour commencer le jeu : la caméra tourne déjà, il ne reste que la boucle à lancer.
-    // (le UIManager écoute lui aussi ce clic, pour la transition hors de l'accueil)
-    // btnStart.addEventListener("click", () => {
-    //     gameEngineInstance.start();
-    // });
 });

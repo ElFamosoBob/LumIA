@@ -70,9 +70,6 @@ export class ColorsRecognizer {
 
         // Non nul pendant un reglage : les 5 cercles figes, dans l'ordre de leurs numeros.
         this.calibrationCircles = null;
-
-        //this.detectedColorsThisFrame = new Set(); not used anymore right now
-
     }
 
 

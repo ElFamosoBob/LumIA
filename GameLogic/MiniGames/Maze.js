@@ -5,11 +5,6 @@ export const DIRECTIONS = {
     RIGHT: 'right'
 };
 
-export const ACTIONS = {
-    CHANGE_PLAYER: 'change_player',
-    NOTHING: 'nothing' //dummy actions if  we ever need one
-}
-
 export const CHARACTERS = {
     WHITE: 'white',
     GREY: 'grey'
