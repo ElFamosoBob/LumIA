@@ -210,8 +210,9 @@
     font-size: clamp(1.8rem, 5.5vw, 3.4rem);
     font-weight: 400;
     text-transform: uppercase;
-    color: var(--orr-bone);
-    text-shadow: 0 0 30px rgba(255, 190, 90, 0.55);
+
+    color: var(--cine-gold-pale);
+    text-shadow: 0 0 30px rgba(255, 180, 60, 0.6), 0 0 70px rgba(255, 150, 40, 0.3);
     white-space: nowrap;
 }
 
@@ -455,6 +456,7 @@
 }
 
 @keyframes cineBloom {
+
     0%,
     50% {
         transform: scale(0.55);
@@ -477,6 +479,7 @@
 }
 
 @keyframes cineEyebrow {
+
     0%,
     30% {
         transform: translateY(8px);
@@ -505,6 +508,7 @@
  * caractéristique de ces interfaces, et il ne coûte qu'une propriété.
  */
 @keyframes cineTitle {
+
     0%,
     40% {
         letter-spacing: 0.7em;
@@ -536,6 +540,7 @@
 }
 
 @keyframes cineStatus {
+
     0%,
     62% {
         opacity: 0;
