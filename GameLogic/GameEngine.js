@@ -5,10 +5,8 @@ import { ArucoEnigma } from './Enigmas/ArucoEnigma.js';
 import { ColorsEnigma } from './Enigmas/ColorsEnigma.js';
 import { GuiltyEnigma } from './Enigmas/GuiltyEnigma.js';
 import { FinalEnigma } from './Enigmas/FinalEnigma.js';
-// import { NetworkManager } from '../Network/NetworkManager.js';
 import { ENIGMA_STATUS } from '../Utils/Constant.js';
 import { ENIGMA_IDS } from '../Utils/Constant.js';
-import { HELP_IDS } from '../Utils/Constant.js';
 import { Timer } from './Timer.js';
 
 
@@ -23,8 +21,6 @@ import { saveProgress, loadProgress, clearProgress } from '../Utils/SaveManager.
 
 class GameEngine {
     constructor() {
-        // this.networkManager = new NetworkManager();
-
         // 2. État global du jeu
         this.dictionnaryOfEnigmas = {};
 
@@ -69,9 +65,6 @@ class GameEngine {
             showError("Erreur fatale de l'IA. Vérifiez la console.");
             return;
         }
-
-        // Initialisation des autres systèmes
-        // this.networkManager.init();
 
         this.loadEnigmas();
 
