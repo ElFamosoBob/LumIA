@@ -157,13 +157,16 @@
         </div>
 
         <div id="panel-aruco" class="view-panel orrery">
-            <button id="btnVerifier" type="button"> Vérifier </button>
+            <button id="btn-aruco-verify" type="button"> Vérifier </button>
 
-            <p id="result"></p>
+            <!-- le verdict de l'analyse : score, victoire, ou plateau mal cadré -->
+            <p id="aruco-result"></p>
 
-            <p id="message"></p>
+            <!-- la liste des cartes que la caméra n'a pas vues à leur emplacement -->
+            <p id="aruco-message"></p>
 
-            <p id="message2"></p>
+            <!-- le conseil de manipulation, affiché seulement s'il manque des cartes -->
+            <p id="aruco-hint"></p>
         </div>
 
         <div id="panel-colors" class="view-panel orrery">

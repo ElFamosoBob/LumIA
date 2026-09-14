@@ -5,7 +5,7 @@
  * Le bouton est le seul élément cliquable du panneau, et les joueurs l'actionnent debout à un
  * mètre de l'écran : c'est le bouton plein d'orrery.css, simplement agrandi.
  */
-.orrery #btnVerifier {
+.orrery #btn-aruco-verify {
     margin-top: 10px;
     padding: 17px 50px;
 
@@ -19,7 +19,7 @@
 
 /* Le bouton s'enfonce : sans ça, rien ne signale que le clic est passé pendant les 25 frames
    d'analyse qui suivent. */
-.orrery #btnVerifier:active {
+.orrery #btn-aruco-verify:active {
     transform: translateY(2px);
 }
 
@@ -28,7 +28,7 @@
  * devient un bandeau à filets : de loin, on distingue toujours le verdict des consignes qui
  * le suivent, mais sans réintroduire de carte.
  */
-.orrery #result {
+.orrery #aruco-result {
     box-sizing: border-box;
     margin: 26px 0 0;
     padding: 12px 30px;
@@ -55,7 +55,7 @@
 }
 
 /* Le cartouche ne doit pas rester visible en vide avant la première vérification */
-.orrery #result:empty {
+.orrery #aruco-result:empty {
     display: none;
 }
 
@@ -64,7 +64,7 @@
  * plutôt que le bleu des éléments normaux — un problème ne doit pas ressembler à
  * une information de routine.
  */
-.orrery #message {
+.orrery #aruco-message {
     margin: 16px 0 0;
     max-width: min(640px, 92%);
 
@@ -78,7 +78,7 @@
 }
 
 /* La marche à suivre : en retrait, elle se lit comme une note de bas de page */
-.orrery #message2 {
+.orrery #aruco-hint {
     margin: 10px 0 0;
     padding-left: 14px;
     max-width: min(640px, 92%);
@@ -95,6 +95,6 @@
     text-align: left;
 }
 
-.orrery #message2:empty {
+.orrery #aruco-hint:empty {
     display: none;
 }

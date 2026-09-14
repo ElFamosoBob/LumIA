@@ -1,3 +1,5 @@
+import { ARUCO_SHEETS, SHEET_SIZE_MM } from '../../GameLogic/Enigmas/ArucoCards.js';
+
 export class ArucoRecognizer {
     constructor(videoElement, canvasElement) {
         this.video = videoElement;
@@ -21,17 +23,10 @@ export class ArucoRecognizer {
     }
 
     initConfiguration() {
-        const UpLeft1 = 90, UpRight1 = 91, DownRight1 = 93, DownLeft1 = 92;
-        const UpLeft2 = 94, UpRight2 = 95, DownRight2 = 97, DownLeft2 = 96;
+        this.realWidth = SHEET_SIZE_MM.width;
+        this.realHeight = SHEET_SIZE_MM.height;
 
-        this.realWidth = 262;
-        this.realHeight = 175;
-
-        // On ne garde que les données physiques
-        this.sheets = [
-            { ID: 1, corners: [UpLeft1, UpRight1, DownRight1, DownLeft1] },
-            { ID: 2, corners: [UpLeft2, UpRight2, DownRight2, DownLeft2] }
-        ];
+        this.sheets = ARUCO_SHEETS.map(sheet => ({ ID: sheet.id, corners: sheet.corners }));
     }
 
     initState() {
