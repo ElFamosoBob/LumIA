@@ -1,28 +1,26 @@
 import { Enigma } from './Enigma.js';
 import { ENIGMA_IDS, IRL_REWARDS } from '../../Utils/Constant.js';
-import { ARUCO_CARDS } from './ArucoCards.js';
+import { ARUCO_CARDS } from '../../Config/ArucoBoard.js';
 
 import inputManagerInstance from '../../Inputs/InputManager.js';
 import uiManagerInstance from '../../UI/UIManager.js';
 
-// Écart toléré, en millimètres, entre le centre d'un marqueur et l'emplacement attendu.
+// Tolerated gap, in millimetres, between the centre of a marker and its expected slot.
 const POSITION_TOLERANCE_MM = 10;
 
-// Une carte peut clignoter d'une image à l'autre (reflet, main qui passe) : on regarde le plateau
-// pendant plusieurs dizaines d'images et il suffit d'avoir vu la carte UNE fois pour la valider.
+//number of frame we look. If a card is only see once, it is enough to be validated
 const FRAMES_PER_CHECK = 25;
 
-// Une feuille absente de presque toutes les images veut dire que le plateau est mal cadré : le
-// score n'a alors aucun sens. On tolère deux images sans elle, pas plus.
+// A sheet missing from nearly every frame means the board is badly framed : the score would then
+// be meaningless. We tolerate two frames without it, no more.
 const MAX_FRAMES_WITHOUT_SHEET = FRAMES_PER_CHECK - 2;
 
 /**
- * L'équipe pose huit cartes vrai/faux sur deux feuilles repérées par des marqueurs ArUco.
- * Un clic sur "Vérifier" lance une analyse de quelques secondes, au terme de laquelle l'énigme
- * dit combien de cartes sont à la fois bien répondues et bien placées.
+ * The team lays eight true/false cards on two sheets marked with Aruco markers. Clicking
+ * "Vérifier" starts a few seconds of analysis, at the end of which the enigma says how many
+ * cards are both answered and placed correctly.
  *
- * Les affirmations, les identifiants de marqueurs et la disposition physique sont dans
- * ArucoCards.js ; ce fichier ne contient que la règle du jeu.
+ * The statements, the marker ids and the physical layout live in Config/ArucoBoard.js
  */
 export class ArucoEnigma extends Enigma {
     constructor() {
@@ -30,21 +28,21 @@ export class ArucoEnigma extends Enigma {
 
         this.panel = uiManagerInstance.panelManager.panelAruco;
 
-        // Vrai seulement pendant une analyse : en dehors, les images de la caméra sont ignorées.
+        // True only during an analysis : outside of one, camera frames are ignored.
         this.checkNow = false;
         this.framesAnalysed = 0;
 
-        // Combien d'images ont montré chaque marqueur à l'emplacement d'une carte.
+        // How many frames showed each marker at the slot of a card.
         this.markerSightings = {};
 
-        // Combien d'images n'ont pas montré chaque feuille en entier.
+        // How many frames did not show each sheet in full.
         this.framesWithoutSheet = {};
 
         this.panel.connectVerifyButton(() => this.startCheck());
     }
 
     /**
-     * Remet les compteurs à zéro et ouvre une nouvelle fenêtre d'analyse.
+     * Resets the counters and opens a new analysis window.
      */
     startCheck() {
         if (this.isResolved) return;
@@ -62,14 +60,14 @@ export class ArucoEnigma extends Enigma {
         if (this.isResolved) return;
 
         inputManagerInstance.update(this.id);
-        // playerState contient { markers: [...], sheetsVisible: [...] } fourni par le Recognizer
+        // playerState holds { markers: [...], sheetsVisible: [...] }, filled by the Recognizer
         const playerState = inputManagerInstance.getState();
 
         this.checkCondition(playerState);
     }
 
     /**
-     * Une image de plus dans l'analyse en cours. Hors analyse, il n'y a rien à faire.
+     * One more frame in the running analysis. Outside of an analysis there is nothing to do.
      */
     checkCondition(currentResults) {
         if (!this.checkNow || !currentResults) return;
@@ -86,8 +84,8 @@ export class ArucoEnigma extends Enigma {
     }
 
     /**
-     * Comptabilise l'absence de chaque feuille, pour pouvoir avertir l'équipe que son plateau
-     * est mal cadré plutôt que de lui annoncer un score faux.
+     * Counts how often each sheet is missing, so we can warn the team that its board is badly
+     * framed instead of announcing a wrong score.
      */
     recordSheetsHidden(sheetsVisible) {
         for (const sheetID of [1, 2]) {
@@ -96,8 +94,8 @@ export class ArucoEnigma extends Enigma {
     }
 
     /**
-     * Retient les marqueurs vus à l'emplacement d'une carte, quelle que soit leur face : c'est
-     * l'évaluation finale qui décidera si la face était la bonne.
+     * Remembers the markers seen at the slot of a card, whatever their face : the final
+     * evaluation is what decides whether the face was the right one.
      */
     recordMarkersWellPlaced(markers) {
         for (const marker of markers) {
@@ -108,8 +106,8 @@ export class ArucoEnigma extends Enigma {
     }
 
     /**
-     * Un marqueur est « à l'emplacement » d'une carte s'il est sur la bonne feuille et assez
-     * proche des coordonnées attendues, en millimètres dans le repère redressé de la feuille.
+     * A marker is "at the slot" of a card when it sits on the right sheet and close enough to
+     * the expected coordinates, in millimetres in the flattened frame of that sheet.
      */
     isMarkerOnCardSlot(marker, card) {
         return card.sheet === marker.sheetID
@@ -118,23 +116,23 @@ export class ArucoEnigma extends Enigma {
     }
 
     /**
-     * @returns {boolean} faux si au moins une feuille est restée hors champ presque toute l'analyse
+     * @returns {boolean} false if at least one sheet stayed out of frame for the whole analysis
      */
     areAllSheetsVisible() {
         return [1, 2].every(sheetID => this.framesWithoutSheet[sheetID] <= MAX_FRAMES_WITHOUT_SHEET);
     }
 
     /**
-     * Une carte est réussie quand sa face correcte a été vue au moins une fois à son emplacement.
+     * A card is right when its correct face was seen at least once at its slot.
      */
     isCardWellAnswered(card) {
         return (this.markerSightings[card.correctId] ?? 0) >= 1;
     }
 
     /**
-     * Les cartes dont AUCUNE des deux faces n'a été vue à leur emplacement. Ce n'est pas une
-     * mauvaise réponse mais un problème de détection : la carte est mal posée, ou cachée.
-     * @returns {Array<string>} les affirmations concernées
+     * The cards of which NEITHER face was seen at its slot. That is not a wrong answer but a
+     * detection problem : the card is badly laid, or hidden.
+     * @returns {Array<string>} the statements concerned
      */
     undetectedCardNames() {
         return ARUCO_CARDS
@@ -144,7 +142,7 @@ export class ArucoEnigma extends Enigma {
     }
 
     /**
-     * Fin de l'analyse : on annonce le verdict, et on gagne si les huit cartes sont bonnes.
+     * End of the analysis : we announce the verdict, and win if all eight cards are right.
      */
     evaluateGame() {
         if (!this.areAllSheetsVisible()) {
@@ -157,7 +155,6 @@ export class ArucoEnigma extends Enigma {
         const nbCardsOK = ARUCO_CARDS.filter(card => this.isCardWellAnswered(card)).length;
 
         if (nbCardsOK === ARUCO_CARDS.length) {
-            this.panel.showVictory();
             this.onSuccess();
         } else {
             this.panel.showScore(nbCardsOK, ARUCO_CARDS.length);

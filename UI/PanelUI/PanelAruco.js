@@ -1,13 +1,12 @@
 /**
- * L'affichage de l'énigme des cartes vrai/faux : uniquement du DOM, aucune règle de jeu.
+ * The display of the true/false card enigma
  *
- * Trois zones de texte, du plus important au plus secondaire :
- *  - le verdict (score, victoire, ou plateau mal cadré),
- *  - la liste des cartes que la caméra n'a pas trouvées à leur emplacement,
- *  - le conseil de manipulation qui va avec cette liste.
+ * Three text areas, from the most to the least important :
+ *  - the verdict (score, victory, or badly framed board),
+ *  - the list of cards the camera did not find at their slot,
+ *  - the handling tip that goes with that list.
  *
- * C'est ArucoEnigma qui décide laquelle de ces situations s'applique ; ce panneau se contente
- * de mettre les bons mots aux bons endroits.
+ * ArucoEnigma decides which of those situations applies
  */
 export class PanelAruco {
 
@@ -19,8 +18,7 @@ export class PanelAruco {
     }
 
     /**
-     * Branche le bouton "Vérifier". L'énigme donne ce qu'il doit déclencher, le panneau ne
-     * sait pas ce que ça fait.
+     * Wires the "Vérifier" button.
      * @param {Function} onVerify
      */
     connectVerifyButton(onVerify) {
@@ -28,8 +26,8 @@ export class PanelAruco {
     }
 
     /**
-     * L'analyse dure plusieurs dizaines d'images : on prévient, et on efface le verdict précédent
-     * pour qu'il ne soit pas confondu avec celui qui arrive.
+     * The analysis spans a few dozen frames : we say so, and we wipe the previous verdict so it
+     * cannot be mistaken for the one about to come.
      */
     showAnalysing() {
         this.setResult("Analyse en cours ...");
@@ -38,22 +36,15 @@ export class PanelAruco {
     }
 
     /**
-     * Toutes les cartes sont au bon endroit : l'énigme est gagnée.
-     */
-    showVictory() {
-        this.setResult("Bravo !");
-    }
-
-    /**
-     * Le plateau est lisible mais l'équipe n'a pas encore tout placé correctement.
+     * The board is readable but the team has not placed everything correctly yet.
      */
     showScore(nbCardsOK, nbCardsToPlace) {
         this.setResult(`Nombre de cartes correctes et bien placées: ${nbCardsOK} sur ${nbCardsToPlace} cartes`);
     }
 
     /**
-     * Une feuille est restée hors champ presque toute l'analyse : le score n'aurait aucun sens,
-     * on efface donc aussi le détail des cartes manquantes, qui serait trompeur.
+     * A sheet stayed out of frame for nearly the whole analysis : the score would be meaningless,
+     * so we also wipe the list of missing cards, which would be misleading.
      */
     showSheetsHidden() {
         this.setResult("Tous les coins du plateau de jeu ne sont pas visibles ! N'hésitez pas à passer la main brièvement devant la caméra pendant la vérification.");
@@ -62,9 +53,9 @@ export class PanelAruco {
     }
 
     /**
-     * Les cartes que la caméra n'a vues à leur emplacement ni en "vrai" ni en "faux". Le conseil
-     * n'apparaît que s'il y en a : sans carte manquante, il n'aurait rien à expliquer.
-     * @param {Array<string>} cardNames - vide quand tout a été détecté
+     * The cards the camera saw at their slot on neither face. This is not a wrong answer but a
+     * detection problem : the card is badly laid, or hidden.
+     * @param {Array<string>} cardNames - empty when everything was detected
      */
     showMissingCards(cardNames) {
         if (cardNames.length === 0) {
