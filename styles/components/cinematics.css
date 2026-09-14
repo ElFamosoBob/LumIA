@@ -1,4 +1,26 @@
-/* file about all the funky animations on unlocking a tab */
+/* ==========================================================
+   CINÉMATIQUE DE DÉVERROUILLAGE
+   Réf. : les consoles de Prometheus. Un instrument qui s'allume,
+   cherche, verrouille sa cible, puis se referme — et non un objet
+   qui vole à travers l'écran.
+
+   Cinq temps, 5 s en tout (UNLOCK_ANIMATION_MS dans UI/Animations.js
+   doit rester à la même valeur) :
+     0,0 → 0,7 s   une ligne d'amorce s'ouvre depuis le centre
+     0,6 → 2,2 s   les anneaux se déploient, le balayage tourne
+     2,0 → 3,0 s   la visée se resserre, le titre se condense
+     3,0 → 4,2 s   maintien, les couronnes dérivent lentement
+     4,2 → 5,0 s   tout se rétracte et s'éteint
+
+   Toutes les pistes durent 5 s et se déclenchent ensemble : le
+   séquencement se fait par les pourcentages, ce qui garde les
+   éléments synchronisés sans une cascade de delays à recalculer
+   dès qu'on change une durée.
+   ========================================================== */
+
+/* Le nouvel onglet vient d'apparaître en orange : la lueur du sursaut
+   reprend cette couleur, sinon le bouton clignotait en vert alors
+   qu'il désigne quelque chose qui reste à faire. */
 .unlock-animation {
     animation: popAndGlow 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -11,125 +33,557 @@
 
     40% {
         opacity: 1;
-        transform: scale(1.05) translateY(0);
-        box-shadow: 0px 10px 20px rgba(76, 175, 80, 0.6);
+        transform: scale(1.06) translateY(0);
+        box-shadow: 0 0 34px rgba(245, 135, 31, 0.85);
     }
 
     100% {
         opacity: 1;
         transform: scale(1) translateY(0);
-        box-shadow: 0px 0px 0px transparent;
+        box-shadow: 0 0 18px rgba(245, 135, 31, 0.45);
     }
 }
 
-/* L'écran noir transparent */
+
+/* --- L'écran --- */
+
 .unlock-cinematic {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     opacity: 0;
     transition: opacity 0.3s ease;
+
+    /* Le titre part très espacé : sur un nom long il dépasse alors largement
+       la fenêtre. Il est invisible à cet instant, mais sans ce overflow il
+       ferait quand même apparaître une barre de défilement. */
+    overflow: hidden;
+
+    /*
+     * L'or, et non le bleu du reste du site. C'est la couleur des consoles de
+     * nef de Prometheus, et surtout celle de l'onglet qui va apparaître : la
+     * cinématique annonce une énigme JOUABLE, donc elle parle déjà la langue
+     * de l'orange « il reste à faire ». Ces jetons sont locaux — l'or n'a pas
+     * à exister ailleurs dans la palette.
+     */
+    --cine-gold: #ffb43c;
+    --cine-gold-pale: #ffe3ab;
+    --cine-gold-dim: #8a5f1e;
+
+    /* le noir bleuté du style, avec une lueur centrale : l'écran n'est pas
+       éteint, c'est un instrument qui prend la main */
+    background:
+        radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255, 180, 60, 0.10), transparent 70%),
+        rgba(8, 7, 12, 0.95);
 }
 
 .cinematic-content {
-    text-align: center;
-    transform: scale(0);
-}
-
-/* Titre Zelda Doré */
-.cinematic-title {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #FFD700;
-    text-shadow: 0px 5px 20px rgba(255, 215, 0, 0.6);
-    margin-top: 15px;
     position: relative;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Assez d'air pour que le halo du titre ne noie pas les deux étiquettes
+       en chasse fixe, qui sont bien plus petites que lui. */
+    gap: 26px;
+    text-align: center;
 }
 
-.cinematic-title::before,
-.cinematic-title::after {
-    content: "✨";
+/*
+ * Au repos, tout est invisible : c'est .cinematic-animate qui allume chaque
+ * piste. Sans ça, le contenu apparaîtrait d'un bloc pendant les 10 ms qui
+ * séparent l'affichage de l'overlay du départ de l'animation.
+ */
+.cine-rig,
+.cine-bloom,
+.cine-line,
+.cine-eyebrow,
+.cinematic-title,
+.cine-status {
+    opacity: 0;
+}
+
+
+/* --- Le gréement : anneaux, graduations, balayage --- */
+
+.cine-rig {
     position: absolute;
-    font-size: 2.5rem;
-    animation: clignotementEtoile 0.4s infinite alternate;
+    top: 50%;
+    left: 50%;
+    width: min(460px, 86vmin);
+    height: min(460px, 86vmin);
+    margin: calc(min(460px, 86vmin) / -2) 0 0 calc(min(460px, 86vmin) / -2);
+    pointer-events: none;
+    overflow: visible;
 }
 
-.cinematic-title::before {
-    top: -20px;
-    left: -40px;
-    animation-delay: 0s;
+.cine-rig circle,
+.cine-rig path {
+    fill: none;
+    stroke-linecap: butt;
+    /* Les cercles sont centrés sur la viewBox : on tourne donc autour de son
+       milieu, pas autour de l'origine du repère SVG. */
+    transform-box: view-box;
+    transform-origin: 50% 50%;
 }
 
-.cinematic-title::after {
-    bottom: -20px;
-    right: -40px;
-    animation-delay: 0.2s;
+.cine-ticks {
+    stroke: var(--cine-gold-dim);
+    stroke-width: 11;
 }
 
-@keyframes clignotementEtoile {
+.cine-ring {
+    stroke: var(--cine-gold);
+    stroke-width: 1.5;
+}
+
+.cine-dash {
+    stroke: var(--cine-gold-dim);
+    stroke-width: 2;
+}
+
+.cine-sweep {
+    stroke: var(--cine-gold-pale);
+    stroke-width: 3;
+    filter: drop-shadow(0 0 7px rgba(255, 200, 110, 0.95));
+}
+
+.cine-cross path {
+    stroke: var(--cine-gold-pale);
+    stroke-width: 2;
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+}
+
+.cine-cross {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+}
+
+
+/* --- La ligne d'amorce et l'éclat de verrouillage --- */
+
+.cine-line {
+    width: min(420px, 80vmin);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cine-gold-pale), transparent);
+}
+
+.cine-bloom {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 340px;
+    height: 340px;
+    margin: -170px 0 0 -170px;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255, 190, 90, 0.6), transparent 62%);
+}
+
+
+/* --- Le texte --- */
+
+.cine-eyebrow {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    text-transform: uppercase;
+    color: var(--cine-gold);
+}
+
+/*
+ * Le corps est volontairement plus mesuré que la taille d'un titre de page :
+ * l'espacement de départ ajoute presque autant de largeur que les lettres
+ * elles-mêmes, et « Apprentissage », le plus long des noms d'onglets, doit
+ * tenir dans la fenêtre pendant toute la condensation.
+ */
+.cinematic-title {
+    margin: 0;
+    font-family: var(--orr-font-display);
+    font-size: clamp(1.8rem, 5.5vw, 3.4rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--orr-bone);
+    text-shadow: 0 0 30px rgba(255, 190, 90, 0.55);
+    white-space: nowrap;
+}
+
+.cine-status {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+    text-transform: uppercase;
+    /* --orr-valid est trop sombre pour se lire dans le halo du titre : on reprend
+       le vert phosphore du terminal, plus clair, qui dit la même chose. */
+    color: #6fcf76;
+}
+
+
+/* --- La chorégraphie --- */
+
+.cinematic-animate .cine-line {
+    animation: cineLine 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cine-ring-1 {
+    animation: cineRing 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+/* le second anneau part un cheveu plus tard : c'est ce décalage qui donne
+   l'impression d'un mécanisme qui se déploie et non d'un bloc qui grossit */
+.cinematic-animate .cine-ring-2 {
+    animation: cineRing 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) 0.12s forwards;
+}
+
+.cinematic-animate .cine-dash {
+    animation: cineDash 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cine-ticks {
+    animation: cineTicks 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cine-sweep {
+    animation: cineSweep 6.5s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+.cinematic-animate .cine-cross {
+    animation: cineCross 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cine-bloom {
+    animation: cineBloom 6.5s ease-out forwards;
+}
+
+.cinematic-animate .cine-eyebrow {
+    animation: cineEyebrow 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cinematic-title {
+    animation: cineTitle 6.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+}
+
+.cinematic-animate .cine-status {
+    animation: cineStatus 6.5s ease-out forwards;
+}
+
+.cinematic-animate .cine-rig {
+    opacity: 1;
+}
+
+
+/* --- Les pistes --- */
+
+@keyframes cineLine {
     0% {
-        transform: scale(0.8) rotate(-15deg);
-        opacity: 0.4;
+        transform: scaleX(0);
+        opacity: 0;
+    }
+
+    10% {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0.45;
+    }
+
+    84% {
+        transform: scaleX(1);
+        opacity: 0.45;
     }
 
     100% {
-        transform: scale(1.5) rotate(15deg);
-        opacity: 1;
-        filter: drop-shadow(0 0 10px white);
+        transform: scaleX(0);
+        opacity: 0;
     }
 }
 
-/* Séquence complète (5 Secondes) */
-.cinematic-animate {
-    animation: spiraleZelda 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-@keyframes spiraleZelda {
+/* Les anneaux : ils dépassent leur taille puis reviennent, comme un
+   diaphragme qui se cale. */
+@keyframes cineRing {
     0% {
-        transform: translate(-45vw, -45vh) rotate(-1080deg) scale(0.1);
+        transform: scale(0.25);
         opacity: 0;
     }
 
     12% {
-        transform: translate(40vw, -25vh) rotate(-810deg) scale(0.3);
-        opacity: 1;
+        opacity: 0;
     }
 
-    25% {
-        transform: translate(25vw, 40vh) rotate(-540deg) scale(0.5);
+    34% {
+        transform: scale(1.07);
+        opacity: 0.95;
     }
 
-    38% {
-        transform: translate(-35vw, 25vh) rotate(-270deg) scale(0.7);
+    44% {
+        transform: scale(1);
+        opacity: 0.75;
     }
 
-    50% {
-        transform: translate(0, 0) rotate(0deg) scale(1.2);
-        text-shadow: 0 0 60px #FFD700;
-    }
-
-    55% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-        text-shadow: 0 0 20px #FFD700;
-    }
-
-    85% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-        opacity: 1;
-        text-shadow: 0 0 20px #FFD700;
+    84% {
+        transform: scale(1);
+        opacity: 0.75;
     }
 
     100% {
-        transform: translateY(-500px) rotate(360deg) scale(0.1);
+        transform: scale(1.55);
         opacity: 0;
+    }
+}
+
+@keyframes cineDash {
+    0% {
+        transform: rotate(-130deg) scale(0.35);
+        opacity: 0;
+    }
+
+    16% {
+        opacity: 0;
+    }
+
+    46% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.85;
+    }
+
+    84% {
+        transform: rotate(42deg) scale(1);
+        opacity: 0.85;
+    }
+
+    100% {
+        transform: rotate(76deg) scale(1.45);
+        opacity: 0;
+    }
+}
+
+@keyframes cineTicks {
+    0% {
+        transform: rotate(95deg) scale(0.55);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0;
+    }
+
+    50% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.6;
+    }
+
+    84% {
+        transform: rotate(-20deg) scale(1);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: rotate(-34deg) scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Le balayage : trois tours rapides pendant la recherche, puis il s'arrête
+   net au moment où la cible est verrouillée. */
+@keyframes cineSweep {
+    0% {
+        transform: rotate(0deg);
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 0;
+    }
+
+    18% {
+        opacity: 1;
+    }
+
+    52% {
+        transform: rotate(1440deg);
+        opacity: 1;
+    }
+
+    62% {
+        transform: rotate(1530deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotate(1530deg);
+        opacity: 0;
+    }
+}
+
+/* La visée se resserre de l'extérieur : c'est le geste qui dit « c'est ça ». */
+@keyframes cineCross {
+    0% {
+        transform: scale(1.9);
+        opacity: 0;
+    }
+
+    38% {
+        transform: scale(1.9);
+        opacity: 0;
+    }
+
+    54% {
+        transform: scale(1);
+        opacity: 0.95;
+    }
+
+    84% {
+        transform: scale(1);
+        opacity: 0.95;
+    }
+
+    100% {
+        transform: scale(0.55);
+        opacity: 0;
+    }
+}
+
+@keyframes cineBloom {
+    0%,
+    50% {
+        transform: scale(0.55);
+        opacity: 0;
+    }
+
+    57% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    74% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes cineEyebrow {
+    0%,
+    30% {
+        transform: translateY(8px);
+        opacity: 0;
+    }
+
+    46% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    84% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-8px);
+        opacity: 0;
+    }
+}
+
+/*
+ * Le titre se condense : les lettres arrivent très écartées et floues, puis
+ * se resserrent d'un coup au moment du verrouillage. C'est le geste
+ * caractéristique de ces interfaces, et il ne coûte qu'une propriété.
+ */
+@keyframes cineTitle {
+    0%,
+    40% {
+        letter-spacing: 0.7em;
+        text-indent: 0.7em;
+        filter: blur(16px);
+        opacity: 0;
+    }
+
+    58% {
+        letter-spacing: 0.18em;
+        text-indent: 0.18em;
+        filter: blur(0);
+        opacity: 1;
+    }
+
+    84% {
+        letter-spacing: 0.18em;
+        text-indent: 0.18em;
+        filter: blur(0);
+        opacity: 1;
+    }
+
+    100% {
+        letter-spacing: 0.5em;
+        text-indent: 0.5em;
+        filter: blur(10px);
+        opacity: 0;
+    }
+}
+
+@keyframes cineStatus {
+    0%,
+    62% {
+        opacity: 0;
+    }
+
+    72% {
+        opacity: 1;
+    }
+
+    84% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/*
+ * Mouvement réduit : on garde la séquence (le JS attend 5 s de toute façon)
+ * mais on retire rotations, échelles et flou. Il ne reste qu'un fondu.
+ */
+@media (prefers-reduced-motion: reduce) {
+
+    .cinematic-animate .cine-rig,
+    .cinematic-animate .cine-bloom,
+    .cinematic-animate .cine-line,
+    .cinematic-animate .cine-eyebrow,
+    .cinematic-animate .cinematic-title,
+    .cinematic-animate .cine-status {
+        animation: cineFadeOnly 6.5s ease-out forwards;
+    }
+
+    @keyframes cineFadeOnly {
+
+        0%,
+        20% {
+            opacity: 0;
+        }
+
+        35%,
+        84% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
     }
 }
 

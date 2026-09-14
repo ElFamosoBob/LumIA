@@ -5,7 +5,7 @@ import { wait } from '../Utils/UtilFunctions.js';
 import { SCREEN_IDS } from '../Utils/Constant.js';
 
 const SUCCESS_ANIMATION_MS = 1400;
-const UNLOCK_ANIMATION_MS = 5000; //needs to be the same in css cinematics.css
+const UNLOCK_ANIMATION_MS = 6500; //needs to be the same in css cinematics.css
 
 export class Animations {
 
