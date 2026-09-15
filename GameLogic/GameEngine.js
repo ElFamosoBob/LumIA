@@ -19,6 +19,14 @@ import { initOpenCV } from '../Utils/LibraryLoading/LoadOpenCV.js';
 import { saveProgress, loadProgress, clearProgress } from '../Utils/SaveManager.js';
 
 
+// The two ways a running game can end. Both stop the loop and drop the save ; only the defeat
+// takes the interface away (see endGame).
+const GAME_OUTCOME = {
+    WON: 'won',
+    LOST: 'lost'
+};
+
+
 class GameEngine {
     constructor() {
         // 2. État global du jeu
@@ -236,9 +244,14 @@ class GameEngine {
 
         const tabCompleted = uiManagerInstance.tabManager.tabs[idEnigma];
 
-        // Security
-        if (!tabCompleted || tabCompleted.status === ENIGMA_STATUS.RESOLVED) {
-            console.log(`DEBUG GameEngine, completeEnigma : tabCompleted : ${tabCompleted} et tabCompleted.status : ${tabCompleted.status}`);
+        if (!tabCompleted) {
+            console.log(`DEBUG GameEngine.completeEnigma : no tab found for enigma '${idEnigma}'`);
+            this.isTransitioning = false;
+            return;
+        }
+
+        if (tabCompleted.status === ENIGMA_STATUS.RESOLVED) {
+            console.log(`DEBUG GameEngine.completeEnigma : enigma '${idEnigma}' is already resolved`);
             this.isTransitioning = false;
             return;
         }
@@ -323,25 +336,40 @@ class GameEngine {
 
         if (!final || !final.isResolved) return;
 
-        this.isRunning = false;
-
-        this.timer.stop(); //partie gagnée : le chrono se fige sur le temps restant
-
-        clearProgress(); //partie terminée : la prochaine équipe repart d'une page vierge
+        this.endGame(GAME_OUTCOME.WON);
     }
 
     /**
-     * Le compte à rebours est arrivé à zéro : la partie est perdue. On coupe la boucle principale
-     * (plus aucune énigme n'est mise à jour) et on affiche l'écran de défaite, qui fait disparaître
-     * les boutons des onglets pour qu'il n'y ait plus rien à faire.
+     * The countdown reached zero : the game is lost.
      */
     handleTimeOver() {
-        if (!this.isRunning) return; //la partie est déjà finie (victoire), on ne l'écrase pas
+        this.endGame(GAME_OUTCOME.LOST);
+    }
+
+    /**
+     * The single way out of a running game, whichever way it ends. Stopping the main loop means
+     * no enigma is updated any more, and the save is dropped so the next team starts fresh.
+     *
+     * Winning deliberately leaves the interface alone — the team is meant to be able to revisit
+     * the tabs it has solved. Losing, on the other hand, takes everything away : the defeat screen
+     * hides the tab buttons so there is nothing left to do.
+     *
+     * @param {string} outcome - GAME_OUTCOME.WON or GAME_OUTCOME.LOST
+     */
+    endGame(outcome) {
+        if (!this.isRunning) {
+            console.log("DEBUG : endGame appelé alors que le jeu ne tourne pas");
+            return;
+        }
 
         this.isRunning = false;
-        showDefeatScreen();
+        this.timer.stop(); //we stop the timer so that players know what time they took
 
-        clearProgress(); //partie terminée : la prochaine équipe repart d'une page vierge
+        clearProgress();
+
+        if (outcome === GAME_OUTCOME.LOST) {
+            showDefeatScreen();
+        }
     }
 
     cleanMemory(enigmaToComplete) {
