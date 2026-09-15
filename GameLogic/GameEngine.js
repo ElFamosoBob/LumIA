@@ -163,14 +163,13 @@ class GameEngine {
 
         progressionInstance.restore(save);
 
-        for (const id of progressionInstance.unlockedIds()) {
-            const tab = uiManagerInstance.tabManager.tabs[id];
-            if (tab) tab.unlockTab(); //l'onglet redevient visible (orange)
+        //the navigation bar redoes itself from the progression
+        uiManagerInstance.tabManager.showProgression();
 
-            if (progressionInstance.isResolved(id)) {
-                if (tab) tab.makeTabCompleted(); //puis vert, et son panneau de victoire remplace le panneau normal
-            } else {
-                this.putEnigmaIntoTheActivePool(id); //énigme encore à faire : elle doit tourner
+        for (const id of progressionInstance.unlockedIds()) {
+            //an enigma still to be done has to run again ; a resolved one shows its victory panel
+            if (!progressionInstance.isResolved(id)) {
+                this.putEnigmaIntoTheActivePool(id);
             }
         }
     }
@@ -235,8 +234,7 @@ class GameEngine {
 
         progressionInstance.markResolved(idEnigma);
 
-        //the tab button turns green, and its victory panel takes the place of the normal one
-        uiManagerInstance.tabManager.tabs[idEnigma]?.makeTabCompleted();
+        uiManagerInstance.tabManager.showResolved(idEnigma);
 
         this.activeEnigmas = this.activeEnigmas.filter(enigme => enigme.id !== idEnigma);
 

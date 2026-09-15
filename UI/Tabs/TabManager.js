@@ -120,9 +120,32 @@ export class TabManager {
         if (terminalButton) terminalButton.style.display = "none";
     }
 
+    /**
+     * One tab turns green : its button changes colour, and its victory panel takes the place of
+     * the normal one
+     */
+    showResolved(idTab) {
+        this.tabs[idTab]?.makeTabCompleted();
+    }
+
+    /**
+     * Repaint the whole navigation bar from the Progression : orange for what is still to be
+     * done, green for what is solved. Used when a reloaded page has to be put back the way the
+     * team left it.
+     */
+    showProgression() {
+        for (const id of progressionInstance.unlockedIds()) {
+            const tab = this.tabs[id];
+            if (!tab) continue;
+
+            tab.unlockTab();
+
+            if (progressionInstance.isResolved(id)) tab.makeTabCompleted();
+        }
+    }
+
     unlockAndShowBeginningPanels() {
         uiManagerInstance.tabManager.tabs[ENIGMA_IDS.ARUCO].unlockTab(); //we activate here the buttons
-        //uiManagerInstance.tabManager.tabs[ENIGMA_IDS.COLORS].unlockTab();
         uiManagerInstance.tabManager.showTab(ENIGMA_IDS.ARUCO);//we make this tab active (open)
     }
 
