@@ -18,6 +18,21 @@ const UNLOCKABLE_IDS = [
  * How far a team has got : the one and only place that answers "is this enigma locked, available
  * or resolved ?".
  *
+ * ── The three statuses (ENIGMA_STATUS, in Utils/Constant.js) ────────────────────
+ *
+ *   LOCKED     the team does not know it exists : no button in the navigation bar.
+ *              Where every enigma starts, except Aruco which is opened by start().
+ *
+ *   AVAILABLE  earned and still to be solved : orange button, normal panel, and the enigma
+ *              runs in the GameEngine active pool whenever its tab is the one on screen (active).
+ *
+ *   RESOLVED   done : green button, victory panel instead of the normal one, and the enigma
+ *              is out of the active pool of the GameEngine. For the three camera enigmas this is also
+ *              what hides the webcam, since there is nothing left to film.
+ *
+ * The only path is LOCKED → AVAILABLE → RESOLVED, and it never goes back : unlock() refuses to
+ * touch anything already unlocked, and nothing ever returns a status to LOCKED. A game starts
+ * over by reset(), not by walking statuses backwards.
  */
 export class Progression {
 
@@ -105,7 +120,7 @@ export class Progression {
      */
     toSave(timerStartTime) {
         return {
-            statuses: { ...this.statuses },
+            statuses: { ...this.statuses }, //... does a copy, by security we use this instead of a the real object
             timerStartTime,
             chatbotHasFoundCulprit: this.chatbotHasFoundCulprit
         };
@@ -124,6 +139,7 @@ export class Progression {
             if (status) this.statuses[id] = status;
         }
 
+        //=== does a copy, by security we use this
         this.chatbotHasFoundCulprit = save.chatbotHasFoundCulprit === true;
     }
 }
