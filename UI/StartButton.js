@@ -5,19 +5,12 @@ export class StartButton {
         this.btnStart = document.getElementById("startButton"); // lance la mission
 
         this.webcamContainer = document.getElementById("webcam-container");
-    }
 
-    /**
-     * Point d'entrée principal du clic sur le bouton de démarrage.
-     * La promesse ne se résout qu'au clic : le code appelant (UIManager) est mis en pause
-     * jusqu'à ce que l'équipe ait fini de cadrer le plateau.
-     */
-    initStartButtonEvent() {
-        if (!this.btnStart) return Promise.reject("Bouton introuvable");
-
-        return new Promise((resolve) => {
-            this.btnStart.addEventListener('click', () => resolve(true), { once: true });
-        });
+        // Disabled again by code, not only by the HTML attribute : on a normal reload Firefox
+        // restores the state a button had before, and would give back an active start button
+        // from the previous game. The click handler in main.js checks the webcam anyway ; this
+        // only keeps the button from looking clickable when it is not.
+        if (this.btnStart) this.btnStart.disabled = true;
     }
 
     /**

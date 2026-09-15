@@ -2,7 +2,15 @@ import gameEngineInstance from './GameLogic/GameEngine.js';
 import uiManagerInstance from './UI/UIManager.js';
 import inputManagerInstance from './Inputs/InputManager.js';
 
-// On attend que la page HTML soit dessinée
+/**
+ * The start-up sequence of the whole game :
+ *
+ *   1. page loaded     → the engine loads OpenCV and MediaPipe, then enables the camera button
+ *   2. camera button   → the browser asks for the camera ; once images arrive, the start button
+ *                        is enabled
+ *   3. start button    → the engine starts (restoring a saved game if there is one), and the
+ *                        interface leaves the welcome screen
+ */
 window.addEventListener("DOMContentLoaded", async () => {
 
     await gameEngineInstance.init();
@@ -10,8 +18,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const btnCamera = document.getElementById("cameraButton");
     const btnStart = document.getElementById("startButton");
 
-    // Un bouton pour allumer la caméra : le navigateur demande l'autorisation, puis on affiche
-    // le flux pour que l'équipe cadre le plateau de jeu.
     // { once: true } : le bouton disparaît après ce clic (showWebcamFeed), on n'écoute donc plus rien
     btnCamera.addEventListener("click", async () => {
         uiManagerInstance.startButton.showWebcamFeed();
@@ -22,11 +28,18 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (isWebcamReady) {
             uiManagerInstance.startButton.enableStartButton();
         }
-
-        // Un bouton pour commencer le jeu : la caméra tourne déjà, il ne reste que la boucle à lancer.
-        // (le UIManager écoute lui aussi ce clic, pour la transition hors de l'accueil)
-        btnStart.addEventListener("click", () => {
-            gameEngineInstance.start();
-        });
     }, { once: true });
+
+    // ONE listener for both halves of the start, armed once. 
+    btnStart.addEventListener("click", () => {
+
+        if (!inputManagerInstance.isWebcamRunning()) return;
+
+        // The welcome screen is gone after the first start, but a quick double click could
+        // otherwise reach here twice and replay the transition.
+        if (gameEngineInstance.isRunning) return;
+
+        gameEngineInstance.start();
+        uiManagerInstance.leaveWelcomeScreen();
+    });
 });

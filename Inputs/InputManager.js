@@ -21,6 +21,15 @@ class InputManager {
         return this.vision.toggleWebcam();
     }
 
+    /**
+     * True once the camera actually delivers images, false again if it is unplugged. This is the
+     * real state to check before starting a mission, rather than the disabled attribute of a
+     * button, which the browser may restore wrongly on reload.
+     */
+    isWebcamRunning() {
+        return this.vision.webcamRunning;
+    }
+
 
     update(tabId) {
         this.vision.update(tabId);

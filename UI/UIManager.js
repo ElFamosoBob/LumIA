@@ -1,4 +1,4 @@
-import { StartButton } from './StartButton.js'; //we import the entire class but we only use initStartButtonEvent
+import { StartButton } from './StartButton.js';
 import { Animations } from './Animations.js';
 import { TabManager } from './Tabs/TabManager.js';
 import { PanelManager } from './PanelUI/PanelManager.js';
@@ -60,15 +60,12 @@ class UIManager {
         });
     }
 
-    async initBeginningOfTheGame() { //we transition from the welcome screen with the big button to first enigmas
-
-        try {
-            await this.startButton.initStartButtonEvent();
-        } catch (error) {
-            console.log("DEBUG : probleme webcam");
-            return false;
-        }
-
+    /**
+     * The transition out of the welcome screen : the panel explodes, the first enigma tab opens,
+     * then the terminal button appears.
+     *
+     */
+    async leaveWelcomeScreen() {
         const waitingTime = this.animations.launchAnimationOutOfWelcomePanel();
         await this.panelManager.panelWelcome.transitionToBeginningTab(waitingTime);
 
@@ -122,5 +119,3 @@ class UIManager {
 //Singleton creation : 
 const uiManagerInstance = new UIManager();
 export default uiManagerInstance;
-
-uiManagerInstance.initBeginningOfTheGame();
