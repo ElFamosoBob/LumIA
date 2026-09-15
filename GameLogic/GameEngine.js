@@ -40,7 +40,7 @@ class GameEngine {
 
         this.timer = new Timer(() => this.handleTimeOver());
 
-        //to lower the fps rendering : the loop is capped
+        //to lower the fps rendering : the loop is capped to
         this.fpsTarget = 10;
         this.frameInterval = 1000 / this.fpsTarget;
         this.lastFrameTime = 0;
@@ -140,7 +140,7 @@ class GameEngine {
         this.putEnigmaIntoTheActivePool(idEnigma);
         this.saveProgress();
     }
-    saveProgr
+
     /**
      * Writes the state of the game into the browser. Called every time the game moves forward.
      */
