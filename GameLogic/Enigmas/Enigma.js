@@ -1,4 +1,5 @@
 import gameEngineInstance from '../GameEngine.js'
+import progressionInstance from '../Progression.js';
 
 import uiManagerInstance from '../../UI/UIManager.js';
 
@@ -6,18 +7,20 @@ export class Enigma {
     /**
      * @param {string} id - L'ID de l'énigme
      * @param {string} name - Le nom d'affichage
-     * @param {boolean} isResolved - SI l'énigme a été résolue ou pas
      * @param {Array<string>} enigmesSuivantes - Liste des IDs à débloquer en cas de réussite
      * @param {string|null} irlReward - Objet physique remis à l'équipe (voir IRL_REWARDS), null si aucun
      */
     constructor(id, name, enigmesSuivantes = [], irlReward = null) {
         this.id = id;
         this.name = name;
-        this.isResolved = false;
         this.enigmesSuivantes = enigmesSuivantes;
         this.irlReward = irlReward;
 
         this.addEventListenerForceResolution();
+    }
+
+    get isResolved() {
+        return progressionInstance.isResolved(this.id);
     }
 
     // Ce que l'énigme doit faire quand on l'active (ex: allumer un onglet)
@@ -36,15 +39,12 @@ export class Enigma {
     }
 
     // Action visuelle personnalisée après victoire (à définir pour chaque énigme)
-    onSuccess(skipAnimations = false) {//
+    onSuccess(skipAnimations = false) {
         console.log(`L'énigme avec le nom : "${this.name}" et l'id : "${this.id}" a été résolue. `);
-        this.isResolved = true;
+
         gameEngineInstance.completeEnigma(this.id, this.enigmesSuivantes, skipAnimations);
+
         uiManagerInstance.tabManager.showTab(this.id); //this reloads the page, showing now the panel of victory instead of the normal panel
-
-
-        // send to admin : 
-        // networkManager.sendMessage({ type: 'VICTOIRE', enigme: this.id });
     }
 
     /**

@@ -10,7 +10,7 @@ import { HELP_IDS } from '../../Utils/Constant.js';
 import { SCREEN_IDS } from '../../Utils/Constant.js';
 
 
-import gameEngineInstance from '../../GameLogic/GameEngine.js';
+import progressionInstance from '../../GameLogic/Progression.js';
 
 
 export class TabManager {
@@ -84,14 +84,15 @@ export class TabManager {
     displayOrNotWebcam(tabId) {
         const tabsWithWebcam = [ENIGMA_IDS.LSF, ENIGMA_IDS.ARUCO, ENIGMA_IDS.COLORS];
 
-        if (tabId === SCREEN_IDS.WELCOME) return; //security so that we don't check gameEngineInstance in the welcome page (gameEngineInstance has yet to start)
+        if (tabId === SCREEN_IDS.WELCOME) return; //l'accueil gère lui-même sa webcam, via le bouton caméra
 
         if (!this.webcamContainer) {
             console.log("DEBUG : webcamcontainer is not defined anymore");
             return;
         }
 
-        if (tabsWithWebcam.includes(tabId) && !gameEngineInstance.dictionnaryOfEnigmas[tabId].isResolved) {
+        //une énigme caméra déjà résolue montre son panneau de victoire : plus rien à filmer
+        if (tabsWithWebcam.includes(tabId) && !progressionInstance.isResolved(tabId)) {
             this.webcamContainer.style.display = "block";
         } else {
             this.webcamContainer.style.display = "none";

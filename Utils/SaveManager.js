@@ -3,15 +3,18 @@
  * But : si la page est rechargée (plantage, F5 malencontreux...), l'équipe retrouve
  * les onglets déjà débloqués/résolus et le temps qu'il lui restait.
  *
- * On ne sauvegarde que l'essentiel : l'état de chaque onglet, l'heure de départ du
- * chronomètre et le drapeau du chatbot. Tout le reste (conversation du chatbot,
+ * On ne sauvegarde que l'essentiel : le statut de chaque élément déverrouillable, l'heure
+ * de départ du chronomètre et le drapeau du chatbot. Tout le reste (conversation du chatbot,
  * avancée à l'intérieur d'une énigme non terminée) repart de zéro.
+ *
+ * Le contenu est construit et relu par Progression.toSave() / Progression.restore() : ce
+ * fichier ne fait que l'écrire et le relire dans le navigateur.
  */
 
 const SAVE_KEY = "jepeia_progression";
 
 /**
- * @param {object} state - { tabs: {id: status}, timerStartTime: number, chatbotHasFoundCulprit: boolean }
+ * @param {object} state - ce que rend Progression.toSave()
  */
 export function saveProgress(state) {
     try {
@@ -30,7 +33,7 @@ export function loadProgress() {
         if (!raw) return null;
 
         const state = JSON.parse(raw);
-        if (!state || !state.tabs) return null; //sauvegarde d'une ancienne version : on l'ignore
+        if (!state || !state.statuses) return null; //sauvegarde d'une ancienne version : on l'ignore
 
         return state;
     } catch (error) {

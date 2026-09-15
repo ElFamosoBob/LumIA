@@ -5,9 +5,9 @@ import { ArucoEnigma } from './Enigmas/ArucoEnigma.js';
 import { ColorsEnigma } from './Enigmas/ColorsEnigma.js';
 import { GuiltyEnigma } from './Enigmas/GuiltyEnigma.js';
 import { FinalEnigma } from './Enigmas/FinalEnigma.js';
-import { ENIGMA_STATUS } from '../Utils/Constant.js';
 import { ENIGMA_IDS } from '../Utils/Constant.js';
 import { Timer } from './Timer.js';
+import progressionInstance from './Progression.js';
 
 
 import { showError } from '../UI/AlertManager.js';
@@ -37,9 +37,6 @@ class GameEngine {
 
         this.isRunning = false;
         this.isTransitioning = false;
-
-        //first of the two conditions unlocking the guilty enigma, the second one being the LSF enigma resolved
-        this.chatbotHasFoundCulprit = false;
 
         this.timer = new Timer(() => this.handleTimeOver());
 
@@ -113,7 +110,8 @@ class GameEngine {
         if (save) {
             this.restoreProgress(save);
         } else {
-            this.putEnigmaIntoTheActivePool(ENIGMA_IDS.ARUCO); //we let the logic of the UI, (so that the buttons of the tabs does not show in the animation)
+            progressionInstance.unlock(ENIGMA_IDS.ARUCO);
+            this.putEnigmaIntoTheActivePool(ENIGMA_IDS.ARUCO);
         }
 
         this.saveProgress();
@@ -124,66 +122,57 @@ class GameEngine {
     }
 
     /**
-     *  Add an enigma to the active pool of enigmas with an animation
+     * Unlocks an enigma : records it in the Progression, shows its tab button, and starts running
+     * its logic. The three always go together, which is why there is a single entry point.
+     *
+     * @param {string} idEnigma
+     * @param {boolean} animated - false for the cheat code and for a restored game
      */
-    activateEnigmaWithAnimation(idEnigma) {
-        uiManagerInstance.unlockNewTabWithAnimations(idEnigma);
-        this.putEnigmaIntoTheActivePool(idEnigma);
-    }
+    activateEnigma(idEnigma, animated = true) {
+        progressionInstance.unlock(idEnigma);
 
-    /**
-    * Add an enigma to the active pool of enigmas. The Ui part shows the button of the enigma while the rest is the game logic which activates the logic of the game (not ui realted)
-    */
-    activateEnigmaWithoutAnimation(idEnigma) {
-        uiManagerInstance.unlockNewTabWithoutAnimations(idEnigma);
-        this.putEnigmaIntoTheActivePool(idEnigma);
-    }
+        if (animated) {
+            uiManagerInstance.unlockNewTabWithAnimations(idEnigma);
+        } else {
+            uiManagerInstance.unlockNewTabWithoutAnimations(idEnigma);
+        }
 
+        this.putEnigmaIntoTheActivePool(idEnigma);
+        this.saveProgress();
+    }
+    saveProgr
     /**
-     * Écrit dans le navigateur l'état de la partie : le statut de chaque onglet suffit à savoir
-     * ce qui est débloqué et ce qui est résolu. Appelée à chaque fois que la partie avance.
+     * Writes the state of the game into the browser. Called every time the game moves forward.
      */
     saveProgress() {
         if (!this.isRunning) return; //partie pas commencée, ou déjà finie : rien à sauvegarder
 
-        const tabsStatus = {};
-        Object.entries(uiManagerInstance.tabManager.tabs).forEach(([id, tab]) => {
-            tabsStatus[id] = tab.status;
-        });
-
-        saveProgress({
-            tabs: tabsStatus,
-            timerStartTime: this.timer.startTime,
-            chatbotHasFoundCulprit: this.chatbotHasFoundCulprit
-        });
+        saveProgress(progressionInstance.toSave(this.timer.startTime));
     }
 
     /**
-     * Remet la partie dans l'état sauvegardé : onglets débloqués (orange) ou résolus (vert),
-     * énigmes résolues marquées comme telles, et les autres remises dans le pool actif.
-     * Aucune animation ici : on ne rejoue pas les cinématiques déjà vues.
+     * Puts the game back the way the team left it : tabs unlocked (orange) or resolved (green),
+     * and every enigma still to be done back in the active pool.
+     *
+     * No animation here : we do not replay cinematics the team has already seen.
+     *
      * @param {object} save - ce que loadProgress() a retrouvé
      */
     restoreProgress(save) {
         console.log("💾 GameEngine : progression retrouvée, reprise de la partie.");
 
-        Object.entries(save.tabs).forEach(([idTab, status]) => {
-            const tab = uiManagerInstance.tabManager.tabs[idTab];
-            if (!tab || status === ENIGMA_STATUS.LOCKED) return;
+        progressionInstance.restore(save);
 
-            tab.unlockTab(); //l'onglet redevient visible (orange)
+        for (const id of progressionInstance.unlockedIds()) {
+            const tab = uiManagerInstance.tabManager.tabs[id];
+            if (tab) tab.unlockTab(); //l'onglet redevient visible (orange)
 
-            if (status === ENIGMA_STATUS.RESOLVED) {
-                tab.makeTabCompleted(); //puis vert, et son panneau de victoire remplace le panneau normal
-
-                const enigma = this.dictionnaryOfEnigmas[idTab];
-                if (enigma) enigma.isResolved = true;
+            if (progressionInstance.isResolved(id)) {
+                if (tab) tab.makeTabCompleted(); //puis vert, et son panneau de victoire remplace le panneau normal
             } else {
-                this.putEnigmaIntoTheActivePool(idTab); //énigme encore à faire : elle doit tourner
+                this.putEnigmaIntoTheActivePool(id); //énigme encore à faire : elle doit tourner
             }
-        });
-
-        this.chatbotHasFoundCulprit = save.chatbotHasFoundCulprit === true;
+        }
     }
 
     putEnigmaIntoTheActivePool(idEnigma) {
@@ -213,69 +202,51 @@ class GameEngine {
         // we do not store "now" directly : keeping the remainder avoids drifting away from the target fps
         this.lastFrameTime = now - (elapsed % this.frameInterval);
 
-        if (!this.isTransitioning) {
-            this.activeEnigmas.forEach(currentEnigma => {
-                const tab = uiManagerInstance.tabManager.tabs[currentEnigma.id];
+        if (this.isTransitioning) return;
 
-                if (tab && tab.activeOrNot === true) { // we update only if the tab is active (id est open)
-                    if (!currentEnigma.isResolved) {
-                        currentEnigma.update();
+        // Only the enigma the team is actually looking at is updated
+        const openTabId = uiManagerInstance.tabManager.activeTabId;
 
-                    } else if (currentEnigma.isResolved) { // else if for security you never know in javascript
-
-                        this.completeEnigma(currentEnigma.id);
-
-                    }
-                } else if (!tab) {
-                    console.log("GameEngine DEBUG : tab n'a pas été trouvé");
-                }
-            });
+        for (const enigma of this.activeEnigmas) {
+            if (enigma.id === openTabId) enigma.update();
         }
     }
 
 
-    /** 
-    * Change the status of an enigma toENIGMA_STATUS.RESOLVED, shows the button of the eventual enigmas unlocked, clean the memory of the old Enigma, check if we are in the good enigma to unlock the terminal and check if we are finished and we can display the victory button
-    * @param {string} idEnigma
-    */
+    /**
+     * Records an enigma as resolved, then everything that follows from it : the success animation,
+     * the enigmas it unlocks, the physical object the team has just earned, and the two checks
+     * that may end the game.
+     *
+     * @param {string} idEnigma
+     * @param {Array<string>} enigmasToUnlock - the next links of the chain, if any
+     * @param {boolean} skipAnimations - cheat code : the pop-ups and the unlocking, no cinematic
+     */
     completeEnigma(idEnigma, enigmasToUnlock = [], skipAnimations = false) {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
 
-        const tabCompleted = uiManagerInstance.tabManager.tabs[idEnigma];
-
-        if (!tabCompleted) {
-            console.log(`DEBUG GameEngine.completeEnigma : no tab found for enigma '${idEnigma}'`);
-            this.isTransitioning = false;
-            return;
-        }
-
-        if (tabCompleted.status === ENIGMA_STATUS.RESOLVED) {
+        // The Progression is what says whether this was already done
+        if (progressionInstance.isResolved(idEnigma)) {
             console.log(`DEBUG GameEngine.completeEnigma : enigma '${idEnigma}' is already resolved`);
             this.isTransitioning = false;
             return;
         }
 
-        // We change the status to resolved for the tab (and completed for the button of the tab, which changes its color to green)
-        tabCompleted.makeTabCompleted();
+        progressionInstance.markResolved(idEnigma);
 
+        //the tab button turns green, and its victory panel takes the place of the normal one
+        uiManagerInstance.tabManager.tabs[idEnigma]?.makeTabCompleted();
 
         this.activeEnigmas = this.activeEnigmas.filter(enigme => enigme.id !== idEnigma);
 
         //Les animations qui suivent partagent une file d'attente : elles se jouent l'une après
         //l'autre, dans l'ordre où on les demande ici, sans bloquer la suite de cette fonction.
-        //skipAnimations : cas du cheat code, on veut juste les pop-ups et le déblocage, sans cinématique
         if (!skipAnimations) {
             uiManagerInstance.animations.launchSuccessAnimation(); //toujours, que l'énigme débloque quelque chose ou non
         }
 
-        enigmasToUnlock.forEach(nextId => {
-            if (skipAnimations) {
-                this.activateEnigmaWithoutAnimation(nextId);
-            } else {
-                this.activateEnigmaWithAnimation(nextId);
-            }
-        });
+        enigmasToUnlock.forEach(nextId => this.activateEnigma(nextId, !skipAnimations));
 
         this.grantPhysicalRewardOf(idEnigma);
 
@@ -303,38 +274,29 @@ class GameEngine {
     }
 
     /**
-     * Called by the chatbot the moment it announces a single culprit ("Le coupable est: ").
+     * Called by the chatbot the moment it announces a single culprit ("Le coupable est Antoine ").
      */
     notifyChatbotFoundCulprit() {
-        this.chatbotHasFoundCulprit = true;
+        progressionInstance.markChatbotFoundCulprit();
         this.saveProgress();
         this.tryUnlockGuiltyEnigma();
     }
 
     /**
-     * The guilty enigma needs TWO conditions : the LSF enigma resolved AND the chatbot having announced a culprit.
-     * They can happen in any order, so we check both again each time one of them becomes true.
+     * Asked again every time one of the two conditions of the accusation becomes true : the rule
+     * itself lives in the Progression, since it is a question about how far the team has got.
      */
     tryUnlockGuiltyEnigma() {
-        const guiltyTab = uiManagerInstance.tabManager.tabs[ENIGMA_IDS.GUILTY];
+        if (!progressionInstance.shouldUnlockGuilty()) return;
 
-        if (!guiltyTab || guiltyTab.status !== ENIGMA_STATUS.LOCKED) return; // already unlocked, nothing to do
-
-        if (!this.chatbotHasFoundCulprit) return;
-
-        const lsf = this.dictionnaryOfEnigmas[ENIGMA_IDS.LSF];
-        if (!lsf || !lsf.isResolved) return;
-
-        this.activateEnigmaWithAnimation(ENIGMA_IDS.GUILTY);
+        this.activateEnigma(ENIGMA_IDS.GUILTY);
     }
 
     /**
      * The game is over once the final enigma is solved : it is the last one of the chain.
      */
     checkFinalVictory() {
-        const final = this.dictionnaryOfEnigmas[ENIGMA_IDS.FINAL];
-
-        if (!final || !final.isResolved) return;
+        if (!progressionInstance.isGameWon()) return;
 
         this.endGame(GAME_OUTCOME.WON);
     }

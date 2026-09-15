@@ -2,7 +2,8 @@ import gameEngineInstance from '../GameLogic/GameEngine.js';
 import uiManagerInstance from './UIManager.js';
 import { ENIGMA_IDS } from '../Utils/Constant.js';
 import { HELP_IDS } from '../Utils/Constant.js';
-import { ENIGMA_STATUS, IRL_REWARDS } from '../Utils/Constant.js';
+import { IRL_REWARDS } from '../Utils/Constant.js';
+import progressionInstance from '../GameLogic/Progression.js';
 import { showRewardAlert } from '../UI/AlertManager.js';
 import audioManagerInstance from '../Audio/AudioManager.js';
 import { isAnagramOf } from '../Utils/UtilFunctions.js';
@@ -51,15 +52,15 @@ export class TerminalManager {
             case 'prompt':
                 this.feedbackText.innerText = "Accès autorisé : Chatbot déverrouillé.";
                 this.feedbackText.style.color = "green";
-                uiManagerInstance.unlockNewTabWithAnimations(HELP_IDS.CHATBOT);
+                gameEngineInstance.activateEnigma(HELP_IDS.CHATBOT);
                 this.grantPhysicalReward(IRL_REWARDS.R_AFTER_MOVIES);
                 setTimeout(() => this.closeTerminal(), 1500);
                 break;
             case 'apprentissage':
-                if (uiManagerInstance.tabManager.tabs[ENIGMA_IDS.COLORS].status === ENIGMA_STATUS.LOCKED) {
+                if (progressionInstance.isLocked(ENIGMA_IDS.COLORS)) {
                     this.feedbackText.innerText = "Accès autorisé : Colors déverrouillé.";
                     this.feedbackText.style.color = "green";
-                    gameEngineInstance.activateEnigmaWithAnimation(ENIGMA_IDS.COLORS);
+                    gameEngineInstance.activateEnigma(ENIGMA_IDS.COLORS);
                     this.grantPhysicalReward(IRL_REWARDS.R_AFTER_DATE);
                     setTimeout(() => this.closeTerminal(), 1500);
                 } else {

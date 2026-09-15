@@ -3,7 +3,6 @@ import { Animations } from './Animations.js';
 import { TabManager } from './Tabs/TabManager.js';
 import { PanelManager } from './PanelUI/PanelManager.js';
 
-import gameEngineInstance from '../GameLogic/GameEngine.js'
 import { TerminalManager } from './TerminalManager.js';
 
 import { ChatBot } from '../GameLogic/Help/ChatBot.js';
@@ -108,8 +107,6 @@ class UIManager {
         }
 
         newTab.unlockTab(); //we unlock the tab visually (shows the button)
-
-        gameEngineInstance.saveProgress(); //un onglet de plus est débloqué : la sauvegarde doit le savoir
     }
 
     unlockNewTabWithAnimations(idOfNewTab) {

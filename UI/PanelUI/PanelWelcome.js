@@ -1,5 +1,4 @@
 import uiManagerInstance from '../UIManager.js';
-import { ENIGMA_IDS } from '../../Utils/Constant.js';
 import { wait } from '../../Utils/UtilFunctions.js';
 
 export class PanelWelcome {
@@ -7,9 +6,7 @@ export class PanelWelcome {
 
     }
     /**
-     * Bascule sur l'onglet LSF, lance l'éblouissement global de l'écran, puis attend la fin du flash.
-     * La promesse ne se résout que quand la transition est visuellement terminée, pour que l'appelant
-     * n'ait jamais besoin de deviner combien de temps ça prend.
+     * Bascule sur l'onglet Aruco, lance l'éblouissement global de l'écran, puis attend la fin du flash.
      * @param {number} delay - Le temps à attendre avant de lancer la transition.
      */
     async transitionToBeginningTab(delay) {
