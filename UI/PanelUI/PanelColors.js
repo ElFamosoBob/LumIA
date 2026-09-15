@@ -110,7 +110,7 @@ export class PanelColors {
         if (symbol === MAZE_SYMBOLS.FLOOR) return "floor";
 
         console.error("DEBUG : le symbole de la class Cell n'ait pas reconnu");
-        return;
+        return; //should never happen but js so this should still work anyways
     }
 
     /**
@@ -399,11 +399,11 @@ export class PanelColors {
      * ce message dit immédiatement quel cercle la caméra ne voit pas, sans avoir à chercher.
      */
     showNoAction(hiddenColors) {
-        const detail = hiddenColors.length === 0
+        hiddenColors.length === 0
             ? "aucun cercle caché"
             : `cachés : ${hiddenColors.join(", ")}`;
 
-        this.showFeedback(`Aucune action effectuée`);
+        this.showFeedback(`Aucune action effectuée`, "none");
     }
 
     showNoEffect(color) {

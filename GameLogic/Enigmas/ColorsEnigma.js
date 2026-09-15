@@ -194,8 +194,6 @@ export class ColorsEnigma extends Enigma {
         const hiddenColors = COLORS_USED.filter(color => this.hiddenFrames[color] > this.framesInWindow * 0.75);
 
         if (hiddenColors.length !== 1) {
-            //Message masqué : dire aux joueurs quels cercles la caméra voit leur mâcherait le travail.
-            //Le décommenter est en revanche très utile pour régler la détection le jour de l'installation.
             this.panel.showNoAction(hiddenColors);
             return;
         }
