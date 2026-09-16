@@ -110,7 +110,7 @@ export class PanelColors {
         if (symbol === MAZE_SYMBOLS.FLOOR) return "floor";
 
         console.error("DEBUG : le symbole de la class Cell n'ait pas reconnu");
-        return; //should never happen but js so this should still work anyways
+        return; //should never happen but it case it does js so this should still work anyways
     }
 
     /**
