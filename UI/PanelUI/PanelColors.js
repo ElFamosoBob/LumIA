@@ -399,10 +399,6 @@ export class PanelColors {
      * ce message dit immédiatement quel cercle la caméra ne voit pas, sans avoir à chercher.
      */
     showNoAction(hiddenColors) {
-        hiddenColors.length === 0
-            ? "aucun cercle caché"
-            : `cachés : ${hiddenColors.join(", ")}`;
-
         this.showFeedback(`Aucune action effectuée`, "none");
     }
 
