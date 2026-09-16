@@ -20,7 +20,7 @@ export async function initOpenCV() {
 
         // On crée l'import dynamiquement
         const script = document.createElement('script');
-        script.src = 'Utils/Libraries/opencv.js';
+        script.src = 'vendor/opencv.js';
         script.type = 'text/javascript';
 
         script.onload = () => {

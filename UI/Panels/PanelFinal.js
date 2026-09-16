@@ -12,7 +12,7 @@ export class PanelFinal {
     }
 
     /**
-     * Each team gets its own picture. If the file is missing we hide the frame instead of showing a broken image.
+     * If the file is missing we hide the frame instead of showing a broken image.
      */
     showVisual(source) {
         if (!this.visualElement) return;

@@ -4,11 +4,11 @@
    tout ce qui est un bloc réutilisable vit dans components/.
    =================================================== */
 
-/* We use the same font everywhere that I puted in Utils/Fonts
+/* We use the same font everywhere that I puted in assets/fonts
 */
 @font-face {
     font-family: 'JepeiaSans';
-    src: url('../Utils/Fonts/dejavu-sans.bold.ttf') format('truetype');
+    src: url('../assets/fonts/dejavu-sans.bold.ttf') format('truetype');
 
     font-weight: 700;
     font-style: normal;
@@ -36,7 +36,7 @@
        portant la classe .orrery (voir components/orrery.css).
 
        Police d'affichage : le titre veut une grasse étroite. Aucune n'est
-       embarquée dans Utils/Fonts pour l'instant, donc la pile essaie les
+       embarquée dans assets/fonts pour l'instant, donc la pile essaie les
        condensées système avant de retomber sur JepeiaSans. Poser un fichier
        Barlow Condensed à côté de dejavu-sans.bold.ttf suffirait à la servir
        partout sans toucher au reste. */
@@ -85,7 +85,7 @@ body {
        arrondis d'un demi-pixel sur les bords, et sert de fond le temps du chargement. */
     background-color: #231f20;
 
-    background-image: url('../Utils/Pictures/background.svg');
+    background-image: url('../assets/pictures/background.svg');
 
     /* L'image n'est pas une texture mais un cadre d'interface : ses bordures doivent
        toujours tomber sur les bords de la fenêtre. Avec « cover » elles se décalent

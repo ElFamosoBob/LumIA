@@ -1,11 +1,11 @@
 import { StartButton } from './StartButton.js';
 import { Animations } from './Animations.js';
 import { TabManager } from './Tabs/TabManager.js';
-import { PanelManager } from './PanelUI/PanelManager.js';
+import { PanelManager } from './Panels/PanelManager.js';
 
 import { TerminalManager } from './TerminalManager.js';
 
-import { loadProgress, clearProgress } from '../Utils/SaveManager.js';
+import { loadProgress, clearProgress } from '../GameLogic/SaveManager.js';
 import { showConfirmAlert } from './AlertManager.js';
 
 

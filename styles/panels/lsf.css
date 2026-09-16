@@ -40,7 +40,7 @@
  * Un signe est reconnu. Le vert est celui de la validation (et du code qui
  * tombe sur l'affiche) : la boîte, la barre de maintien qui se remplit et
  * l'écran de victoire racontent alors la même progression d'une seule couleur.
- * La classe est posée par UI/PanelUI/PanelLsf.js à chaque image.
+ * La classe est posée par UI/Panels/PanelLsf.js à chaque image.
  */
 .orrery .output-box.detecting {
     color: #b6f0bd;
