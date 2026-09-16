@@ -1,5 +1,5 @@
 import { wait, normalizeText, levenshtein } from '../../Utils/UtilFunctions.js';
-import { SUSPECTS_BY_TEAM, CURRENT_TEAM } from '../../Utils/Constant.js';
+import { SUSPECTS } from '../../Utils/Constant.js';
 
 const PASSIONS = ["volley", "tennis", "natation", "basket", "handball", "golf", "escrime", "cyclisme",
     "badminton", "musculation", "boxe", "yoga", "judo", "equitation", "danse", "football", "foot",
@@ -17,14 +17,12 @@ export class ChatBot {
      * @param {PanelChatbot} options.panelChatbot - where the conversation is displayed
      * @param {Function} options.onCulpritFound - called the one time the bot narrows its list down
      *        to a single name.
-     * @param {string} [options.equipe]
      */
-    constructor({ panelChatbot, onCulpritFound, equipe = CURRENT_TEAM } = {}) {
+    constructor({ panelChatbot, onCulpritFound } = {}) {
         this.panel = panelChatbot;
         this.onCulpritFound = onCulpritFound;
 
         this.hasStarted = false; // évite de relancer la conversation à chaque réouverture de l'onglet
-        this.equipe = equipe;
 
         this.buildSuspects();
         this.buildStates();
@@ -38,7 +36,7 @@ export class ChatBot {
     }
 
     buildSuspects() {
-        const prenoms = SUSPECTS_BY_TEAM[this.equipe]; //shared with GuiltyEnigma, which uses the first name of the list as the culprit
+        const prenoms = SUSPECTS; //shared with GuiltyEnigma, which uses the first name of the list as the culprit
         this.prenoms = prenoms;
 
         this.suspects = {

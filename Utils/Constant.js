@@ -46,19 +46,9 @@ export const IRL_REWARDS = {
 // Partagé entre l'énigme (la règle) et le panneau (la barre et la durée du crescendo), pour qu'ils ne se désynchronisent pas.
 export const LSF_HOLD_MS = 870;
 
-// The team playing this session. It decides which list of suspects is used by the chatbot and by the guilty enigma.
-export const CURRENT_TEAM = "A";
-
 /**
- * The ten suspects of the investigation, one list per team.
+ * The ten suspects of the investigation.
  * The order matters : the culprit is always the FIRST name of the list, and the enigmas
  * (chatbot, guilty) rely on the index of each suspect to describe them.
  */
-export const SUSPECTS_BY_TEAM = {
-    A: ["Elise", "Oliver", "Michael", "Ines", "Theo", "Juliette", "Charlotte", "Antoine", "Maureen", "Ryan"],
-    B: ["Heloise", "Louis", "Mike", "Irina", "Timothy", "Julie", "Clea", "Arthur", "Magalie", "Redouane"],
-    C: ["Lea", "Lucien", "Lucas", "Adele", "Adam", "Leonie", "Daria", "Pierre", "Leila", "Gabriel"],
-    D: ["Alicia", "Noe", "Ugo", "Samia", "Sacha", "Ida", "Maria", "Camille", "Sara", "Nathan"],
-    E: ["Jade", "Jules", "Noah", "Alba", "Martin", "Emma", "Esther", "Raphael", "Lina", "Liam"],
-    F: ["Agathe", "Mathis", "Tom", "Iris", "Eliott", "Lena", "Lou", "Ethan", "Nour", "Paul"]
-};
+export const SUSPECTS = ["Elise", "Oliver", "Michael", "Ines", "Theo", "Juliette", "Charlotte", "Antoine", "Maureen", "Ryan"];

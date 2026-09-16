@@ -16,7 +16,7 @@ import { showRewardAlert } from '../UI/AlertManager.js';
 
 import { initOpenCV } from '../Utils/LibraryLoading/LoadOpenCV.js';
 
-import { saveProgress, loadProgress, clearProgress } from '../Utils/SaveManager.js';
+import { saveProgress, loadProgress, clearProgress } from './SaveManager.js';
 
 
 // The two ways a running game can end. Both stop the loop and drop the save ; only the defeat

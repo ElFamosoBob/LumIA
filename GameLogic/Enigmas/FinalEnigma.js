@@ -1,21 +1,15 @@
 import { Enigma } from './Enigma.js';
-import { ENIGMA_IDS, CURRENT_TEAM } from '../../Utils/Constant.js';
+import { ENIGMA_IDS } from '../../Utils/Constant.js';
 
 import { showConfirmAlert } from '../../UI/AlertManager.js';
 
 const MAX_TRIES = 2;
 const SECONDS_BETWEEN_TRIES = 5;
 
-const VISUAL_FOLDER = "Utils/Pictures/FinalEnigma";
+// The picture the players read the code from
+const VISUAL_PATH = "assets/pictures/visuel_final.png";
 
-const CODE_BY_TEAM = {
-    A: "157-086-066-146",
-    B: "168-055-147-097",
-    C: "193-027-119-082",
-    D: "165-211-073-091",
-    E: "189-067-225-137",
-    F: "141-147-088-026"
-};
+const CORRECT_CODE = "157-086-066-146";
 
 /**
  * Only the digits matter : the players can type the separators they want, or none at all.
@@ -23,16 +17,15 @@ const CODE_BY_TEAM = {
 const keepOnlyDigits = (code) => code.replace(/\D/g, "");
 
 /**
- * The players read a code on the picture of their team and type it here. Two tries only,
+ * The players read a code on the picture and type it here. Two tries only,
  * with a few seconds of lockout between them.
  */
 export class FinalEnigma extends Enigma {
 
-    constructor(context, equipe = CURRENT_TEAM) {
+    constructor(context) {
         super(context, ENIGMA_IDS.FINAL, "Énigme finale");
 
-        this.equipe = equipe;
-        this.correctCode = keepOnlyDigits(CODE_BY_TEAM[equipe]);
+        this.correctCode = keepOnlyDigits(CORRECT_CODE);
         this.triesLeft = MAX_TRIES;
         this.hasStarted = false; // the loop must not be launched twice
 
@@ -45,7 +38,7 @@ export class FinalEnigma extends Enigma {
         if (this.hasStarted) return;
         this.hasStarted = true;
 
-        this.panel.showVisual(`${VISUAL_FOLDER}/visuel_equipe${this.equipe}.png`);
+        this.panel.showVisual(VISUAL_PATH);
         this.runEnigma();
     }
 

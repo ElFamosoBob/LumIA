@@ -1,5 +1,5 @@
 import { Enigma } from './Enigma.js';
-import { ENIGMA_IDS, IRL_REWARDS, SUSPECTS_BY_TEAM, CURRENT_TEAM } from '../../Utils/Constant.js';
+import { ENIGMA_IDS, IRL_REWARDS, SUSPECTS } from '../../Utils/Constant.js';
 import { normalizeText } from '../../Utils/UtilFunctions.js';
 
 import { showConfirmAlert } from '../../UI/AlertManager.js';
@@ -9,7 +9,7 @@ const COOLDOWNS_SECONDS = [10, 40, 60, 180];
 
 /**
  * The player types the name of the person he accuses. Finding the right one unlocks the final enigma.
- * The culprit is the first suspect of the team list : a girl, so the chatbot which only kept the boys was biased.
+ * The culprit is the first suspect of the list : a girl, so the chatbot which only kept the boys was biased.
  *
  * There is no hard limit on the number of tries (unlike FinalEnigma) : this is not the last gate of the
  * game, so locking the team out here would strand them before they even reach the finale. Instead, each
@@ -17,11 +17,10 @@ const COOLDOWNS_SECONDS = [10, 40, 60, 180];
  */
 export class GuiltyEnigma extends Enigma {
 
-    constructor(context, equipe = CURRENT_TEAM) {
+    constructor(context) {
         super(context, ENIGMA_IDS.GUILTY, "L'accusation", [ENIGMA_IDS.FINAL], IRL_REWARDS.V_AFTER_GUILTY);
 
-        this.equipe = equipe;
-        this.culprit = SUSPECTS_BY_TEAM[equipe][0];
+        this.culprit = SUSPECTS[0];
         this.wrongTries = 0;
         this.hasStarted = false; // the loop must not be launched twice
 
