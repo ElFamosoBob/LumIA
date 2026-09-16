@@ -255,4 +255,11 @@ export class ColorsEnigma extends Enigma {
         this.panel.showVictory();
         this.onSuccess();
     }
+
+    /**
+     * Appelée par le GameEngine à la résolution.
+     */
+    cleanOfMemory() {
+        this.colorsRecognizer.cleanOfMemory();
+    }
 }
