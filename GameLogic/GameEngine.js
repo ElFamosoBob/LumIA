@@ -49,7 +49,7 @@ class GameEngine {
     // asynchronous initialisation (async waits for the files to load instead of interpreting the lines of code without stopping)
     async init() {
         console.log("⚙️ GameEngine: Initialisation automatique du moteur...");
-        uiManagerInstance.startButton.updateCameraButton(false, false); // Bouton disabled "ATTENTE..."
+        uiManagerInstance.startButton.updateCameraButton(false); // Bouton disabled "ATTENTE..."
 
         // we init OpenCV in the global init function because it in 2 enigmas. Mediapipe is loaded in LsfRecognizer because it used only there
         //I may change that and load all the librairies here but for the moment it is this way
@@ -75,7 +75,7 @@ class GameEngine {
 
         console.log("✅ GameEngine: Modèles IA chargés. Le bouton est actif !");
         uiManagerInstance.hideLoading();
-        uiManagerInstance.startButton.updateCameraButton(false, true); // We make the camera button ready
+        uiManagerInstance.startButton.updateCameraButton(true); // We make the camera button ready
     }
 
     //here we load all the enigmas in the list IN ORDER

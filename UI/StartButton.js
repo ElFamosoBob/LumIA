@@ -36,7 +36,7 @@ export class StartButton {
  * Modifies the visuel state of the camera button depending or wheter or not it is activated
  * (c'est le bouton caméra qui attend l'IA : c'est par lui que l'accueil commence)
  */
-    updateCameraButton(isRunning, isReady = true) {
+    updateCameraButton(isReady = true) {
         if (!isReady) {
             this.btnCamera.disabled = true;
             this.btnCamera.innerText = "ATTENTE DU CHARGEMENT...";
