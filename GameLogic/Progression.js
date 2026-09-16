@@ -74,6 +74,8 @@ export class Progression {
     // ── Writing ─────────────────────────────────────────────────────────────────
 
     /**
+     * Only the status is written here : showing the tab and starting the logic is GameEngine.activate().
+     *
      * @returns {boolean} true only if it really was locked, so the caller can tell an actual
      *          unlocking from a second call that changes nothing
      */
