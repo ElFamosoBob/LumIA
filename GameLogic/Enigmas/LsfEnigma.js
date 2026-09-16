@@ -1,30 +1,28 @@
 import { Enigma } from './Enigma.js';
 import { ENIGMA_IDS, IRL_REWARDS, LSF_HOLD_MS } from '../../Utils/Constant.js';
 
-import inputManagerInstance from '../../Inputs/InputManager.js';
-import uiManagerInstance from '../../UI/UIManager.js';
 
 // Au-delà de cet écart entre deux frames, on considère qu'on a cessé de regarder (onglet quitté)
 // et on repart de zéro plutôt que de compter tout le temps écoulé comme du maintien.
 const MAX_GAP_MS = 500;
 
 export class LsfEnigma extends Enigma {
-    constructor() {
+    constructor(context) {
 
-        super(ENIGMA_IDS.LSF, "Enigme LSF", [], IRL_REWARDS.V_AFTER_LSF); //this id (ENIGMA_IDS.LSF) is the same in UIManager, it is attached to the tab AND the Enigma
+        super(context, ENIGMA_IDS.LSF, "Enigme LSF", [], IRL_REWARDS.V_AFTER_LSF); //this id (ENIGMA_IDS.LSF) is the same in UIManager, it is attached to the tab AND the Enigma
 
         // Les 4 lettres qui doivent être vues en même temps
         this.lettresRequises = ["P", "L", "A", "N"];
 
-        this.panel = uiManagerInstance.panelManager.panelLsf;
+        this.panel = this.ui.panelManager.panelLsf;
 
         this.holdStartTime = null; // début du maintien en cours, null si les lettres ne sont pas toutes là
         this.lastCheckTime = null;
     }
 
     update() {
-        inputManagerInstance.update(this.id); //update the sign detected
-        const playerState = inputManagerInstance.getState(); //get the list of signs detected
+        this.input.update(this.id); //update the sign detected
+        const playerState = this.input.getState(); //get the list of signs detected
         this.checkCondition(playerState); //check if we have all the letter required
 
         this.panel.updateGestureDebugText(playerState.gestures); //we update the box with the letters detected

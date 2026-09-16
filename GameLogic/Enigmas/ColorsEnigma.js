@@ -2,8 +2,6 @@ import { Enigma } from './Enigma.js';
 import { Maze, DIRECTIONS, CHARACTERS } from '../MiniGames/Maze.js';
 import { ENIGMA_IDS, IRL_REWARDS } from '../../Utils/Constant.js';
 
-import inputManagerInstance from '../../Inputs/InputManager.js';
-import uiManagerInstance from '../../UI/UIManager.js';
 
 // One action is committed every 6 seconds, whatever the players do in between.
 const TICK_MS = 6000;
@@ -66,15 +64,15 @@ const MAZE_LEVELS = [
 
 export class ColorsEnigma extends Enigma {
 
-    constructor() {
-        super(ENIGMA_IDS.COLORS, "Scanner de Couleurs", [], IRL_REWARDS.V_AFTER_COLORS);
+    constructor(context) {
+        super(context, ENIGMA_IDS.COLORS, "Scanner de Couleurs", [], IRL_REWARDS.V_AFTER_COLORS);
 
-        this.panel = uiManagerInstance.panelManager.panelColors;
+        this.panel = this.ui.panelManager.panelColors;
         this.panel.buildChips(COLORS_USED);
 
         // Le réglage des teintes : le panneau montre, le recognizer mesure, l'énigme les relie.
         // C'est le seul endroit qui connaît les deux, donc le seul où ce branchement a sa place.
-        this.colorsRecognizer = inputManagerInstance.vision.colorsRecognizer;
+        this.colorsRecognizer = this.input.vision.colorsRecognizer;
 
         // Le labyrinthe ne tourne qu'une fois le scanner réglé
         this.isScannerReady = false;
@@ -130,7 +128,7 @@ export class ColorsEnigma extends Enigma {
     update() {
         if (this.isResolved) return;
 
-        inputManagerInstance.update(this.id);
+        this.input.update(this.id);
 
         // Pendant le réglage, la seule chose qui compte est le nombre de pastilles que voit la caméra
         if (!this.isScannerReady) {
@@ -138,7 +136,7 @@ export class ColorsEnigma extends Enigma {
             return;
         }
 
-        const playerState = inputManagerInstance.getState();
+        const playerState = this.input.getState();
         this.checkCondition(playerState);
     }
 

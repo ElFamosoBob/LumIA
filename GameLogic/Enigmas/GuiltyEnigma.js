@@ -2,7 +2,6 @@ import { Enigma } from './Enigma.js';
 import { ENIGMA_IDS, IRL_REWARDS, SUSPECTS_BY_TEAM, CURRENT_TEAM } from '../../Utils/Constant.js';
 import { normalizeText } from '../../Utils/UtilFunctions.js';
 
-import uiManagerInstance from '../../UI/UIManager.js';
 import { showConfirmAlert } from '../../UI/AlertManager.js';
 
 // Le cooldown s'allonge à chaque erreur, puis reste au dernier palier pour toutes les suivantes.
@@ -18,15 +17,15 @@ const COOLDOWNS_SECONDS = [10, 40, 60, 180];
  */
 export class GuiltyEnigma extends Enigma {
 
-    constructor(equipe = CURRENT_TEAM) {
-        super(ENIGMA_IDS.GUILTY, "L'accusation", [ENIGMA_IDS.FINAL], IRL_REWARDS.V_AFTER_GUILTY);
+    constructor(context, equipe = CURRENT_TEAM) {
+        super(context, ENIGMA_IDS.GUILTY, "L'accusation", [ENIGMA_IDS.FINAL], IRL_REWARDS.V_AFTER_GUILTY);
 
         this.equipe = equipe;
         this.culprit = SUSPECTS_BY_TEAM[equipe][0];
         this.wrongTries = 0;
         this.hasStarted = false; // the loop must not be launched twice
 
-        this.panel = uiManagerInstance.panelManager.panelGuilty;
+        this.panel = this.ui.panelManager.panelGuilty;
     }
 
     start() {

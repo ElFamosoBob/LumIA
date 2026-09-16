@@ -79,11 +79,20 @@ class GameEngine {
 
     //here we load all the enigmas in the list IN ORDER
     loadEnigmas() {
-        const lsf = new LsfEnigma();
-        const aruco = new ArucoEnigma();
-        const colors = new ColorsEnigma();
-        const guilty = new GuiltyEnigma();
-        const final = new FinalEnigma();
+        // What every enigma is allowed to talk to. Gave here rather than imported by each
+        // of them becasue this is the only place that knows all three, and an enigma reaching back for
+        // gameEngineInstance would put the whole game layer in a circular import.
+        const context = {
+            engine: this,
+            ui: uiManagerInstance,
+            input: inputManagerInstance
+        };
+
+        const lsf = new LsfEnigma(context);
+        const aruco = new ArucoEnigma(context);
+        const colors = new ColorsEnigma(context);
+        const guilty = new GuiltyEnigma(context);
+        const final = new FinalEnigma(context);
 
         this.dictionnaryOfEnigmas[lsf.id] = lsf;
         this.dictionnaryOfEnigmas[aruco.id] = aruco;

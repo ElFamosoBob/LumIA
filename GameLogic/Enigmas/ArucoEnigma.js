@@ -2,8 +2,6 @@ import { Enigma } from './Enigma.js';
 import { ENIGMA_IDS, IRL_REWARDS } from '../../Utils/Constant.js';
 import { ARUCO_CARDS } from '../../Config/ArucoBoard.js';
 
-import inputManagerInstance from '../../Inputs/InputManager.js';
-import uiManagerInstance from '../../UI/UIManager.js';
 
 // Tolerated gap, in millimetres, between the centre of a marker and its expected slot.
 const POSITION_TOLERANCE_MM = 10;
@@ -23,10 +21,10 @@ const MAX_FRAMES_WITHOUT_SHEET = FRAMES_PER_CHECK - 2;
  * The statements, the marker ids and the physical layout live in Config/ArucoBoard.js
  */
 export class ArucoEnigma extends Enigma {
-    constructor() {
-        super(ENIGMA_IDS.ARUCO, "Aruco vrai/faux", [ENIGMA_IDS.LSF], IRL_REWARDS.V_AFTER_ARUCO);
+    constructor(context) {
+        super(context, ENIGMA_IDS.ARUCO, "Aruco vrai/faux", [ENIGMA_IDS.LSF], IRL_REWARDS.V_AFTER_ARUCO);
 
-        this.panel = uiManagerInstance.panelManager.panelAruco;
+        this.panel = this.ui.panelManager.panelAruco;
 
         // True only during an analysis : outside of one, camera frames are ignored.
         this.checkNow = false;
@@ -59,9 +57,9 @@ export class ArucoEnigma extends Enigma {
     update() {
         if (this.isResolved) return;
 
-        inputManagerInstance.update(this.id);
+        this.input.update(this.id);
         // playerState holds { markers: [...], sheetsVisible: [...] }, filled by the Recognizer
-        const playerState = inputManagerInstance.getState();
+        const playerState = this.input.getState();
 
         this.checkCondition(playerState);
     }

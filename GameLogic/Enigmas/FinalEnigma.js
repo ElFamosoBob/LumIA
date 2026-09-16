@@ -1,7 +1,6 @@
 import { Enigma } from './Enigma.js';
 import { ENIGMA_IDS, CURRENT_TEAM } from '../../Utils/Constant.js';
 
-import uiManagerInstance from '../../UI/UIManager.js';
 import { showConfirmAlert } from '../../UI/AlertManager.js';
 
 const MAX_TRIES = 2;
@@ -29,15 +28,15 @@ const keepOnlyDigits = (code) => code.replace(/\D/g, "");
  */
 export class FinalEnigma extends Enigma {
 
-    constructor(equipe = CURRENT_TEAM) {
-        super(ENIGMA_IDS.FINAL, "Énigme finale");
+    constructor(context, equipe = CURRENT_TEAM) {
+        super(context, ENIGMA_IDS.FINAL, "Énigme finale");
 
         this.equipe = equipe;
         this.correctCode = keepOnlyDigits(CODE_BY_TEAM[equipe]);
         this.triesLeft = MAX_TRIES;
         this.hasStarted = false; // the loop must not be launched twice
 
-        this.panel = uiManagerInstance.panelManager.panelFinal;
+        this.panel = this.ui.panelManager.panelFinal;
     }
 
     start() {

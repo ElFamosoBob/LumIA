@@ -1,16 +1,28 @@
-import gameEngineInstance from '../GameEngine.js'
 import progressionInstance from '../Progression.js';
 
-import uiManagerInstance from '../../UI/UIManager.js';
+/**
+ * @typedef {object} EnigmaContext
+ * @property {GameEngine} engine - to report a success ; the engine is what records it
+ * @property {UIManager} ui - to reach its own panel, and to open its tab once solved
+ * @property {InputManager} input - the camera, for the three enigmas that use it
+ */
 
 export class Enigma {
     /**
+     * Every enigma is handed by the GameEngine that builds it, in loadEnigmas().
+     * None of them imports gameEngineInstance, uiManagerInstance or inputManagerInstance.
+     *
+     * @param {EnigmaContext} context
      * @param {string} id - L'ID de l'énigme
      * @param {string} name - Le nom d'affichage
      * @param {Array<string>} enigmesSuivantes - Liste des IDs à débloquer en cas de réussite
      * @param {string|null} irlReward - Objet physique remis à l'équipe (voir IRL_REWARDS), null si aucun
      */
-    constructor(id, name, enigmesSuivantes = [], irlReward = null) {
+    constructor(context, id, name, enigmesSuivantes = [], irlReward = null) {
+        this.engine = context.engine;
+        this.ui = context.ui;
+        this.input = context.input;
+
         this.id = id;
         this.name = name;
         this.enigmesSuivantes = enigmesSuivantes;
@@ -42,9 +54,9 @@ export class Enigma {
     onSuccess(skipAnimations = false) {
         console.log(`L'énigme avec le nom : "${this.name}" et l'id : "${this.id}" a été résolue. `);
 
-        gameEngineInstance.completeEnigma(this.id, this.enigmesSuivantes, skipAnimations);
+        this.engine.completeEnigma(this.id, this.enigmesSuivantes, skipAnimations);
 
-        uiManagerInstance.tabManager.showTab(this.id); //this reloads the page, showing now the panel of victory instead of the normal panel
+        this.ui.tabManager.showTab(this.id); //this reloads the page, showing now the panel of victory instead of the normal panel
     }
 
     /**
