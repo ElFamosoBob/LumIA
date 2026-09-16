@@ -107,7 +107,7 @@ export class ChatBot {
                 transitions: { oui: "majorite", non: "majorite", recommencer: "debut" }
             },
             majorite: {
-                question: "Les IA génératives peuvent se tromper, elles peuvent avoir des biais. Je t'invite à trouver le coupable par toi-même. Veux-tu avoir une information véridique sur les voisins du coupable ?",
+                question: "Les IA génératives peuvent se tromper, elles peuvent avoir des biais. Je t'invite à trouver le coupable par toi-même. Mathilda vous a laissé un message, souhaitez-vous que je vous le transmette ?",
                 actions: { recommencer: () => this.resetAll() },
                 transitions: { oui: "info", non: "fin", recommencer: "debut" }
             },
