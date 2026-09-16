@@ -113,7 +113,7 @@ export class ChatBot {
             },
             info: {
                 question: [
-                    "La majorité des trois voisins du coupable iront au même lycée que lui.",
+                    "La majorité des trois plus proches voisins du coupable iront au même lycée que lui.",
                     "Aussi, on peut se couper les cheveux, retirer ses lunettes ; mais la taille ne changera jamais."
                 ],
                 actions: { recommencer: () => this.resetAll() },
