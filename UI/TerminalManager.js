@@ -1,5 +1,4 @@
 import gameEngineInstance from '../GameLogic/GameEngine.js';
-import uiManagerInstance from './UIManager.js';
 import { ENIGMA_IDS } from '../Utils/Constant.js';
 import { HELP_IDS } from '../Utils/Constant.js';
 import { IRL_REWARDS } from '../Utils/Constant.js';
@@ -9,7 +8,13 @@ import audioManagerInstance from '../Audio/AudioManager.js';
 import { isAnagramOf } from '../Utils/UtilFunctions.js';
 
 export class TerminalManager {
-    constructor() {
+
+    /**
+     * @param {Animations} animations - given by the UIManager that builds both.
+     */
+    constructor(animations) {
+        this.animations = animations;
+
         this.btnOpen = document.getElementById('btn-open-terminal');
         this.btnClose = document.getElementById('btn-close-terminal');
         this.btnSubmit = document.getElementById('btn-submit-code');
@@ -90,7 +95,7 @@ export class TerminalManager {
     }
 
     grantPhysicalReward(reward) {
-        uiManagerInstance.animations.enqueue(() => showRewardAlert(reward));
+        this.animations.enqueue(() => showRewardAlert(reward));
     }
 
     /**

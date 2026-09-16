@@ -1,5 +1,3 @@
-import uiManagerInstance from './UIManager.js';
-
 import audioManagerInstance from '../Audio/AudioManager.js';
 import { wait } from '../Utils/UtilFunctions.js';
 import { SCREEN_IDS } from '../Utils/Constant.js';
@@ -9,7 +7,14 @@ const UNLOCK_ANIMATION_MS = 6500; //needs to be the same in css cinematics.css
 
 export class Animations {
 
-    constructor() {
+    /**
+     * @param {TabManager} tabManager - given by the UIManager that builds both. Asked for here
+     *        rather than reached for through the UIManager singleton because UIManager is still
+     *        being built.
+     */
+    constructor(tabManager) {
+        this.tabManager = tabManager;
+
         this.cinematicOverlay = document.getElementById("unlock-cinematic");
         this.cinematicText = document.getElementById("cinematic-tab-name");
         this.cinematicContent = this.cinematicOverlay?.querySelector(".cinematic-content");
@@ -54,7 +59,7 @@ export class Animations {
     */
     launchUnlockingEnigmaAnimation(idOfNewTab) {
         return this.enqueue(async () => {
-            const newTab = uiManagerInstance.tabManager.tabs[idOfNewTab];
+            const newTab = this.tabManager.tabs[idOfNewTab];
             if (!this.cinematicOverlay || !newTab) return;
 
             this.cinematicText.innerText = newTab.name;
@@ -89,7 +94,7 @@ export class Animations {
         this.btnStart.innerText = "ACCÈS VALIDÉ...";
         this.btnStart.style.backgroundColor = "#ff5252";
 
-        const welcomePanel = uiManagerInstance.tabManager.tabs[SCREEN_IDS.WELCOME].panel;
+        const welcomePanel = this.tabManager.tabs[SCREEN_IDS.WELCOME].panel;
         const welcomePanelElements = Array.from(welcomePanel.children);
 
         welcomePanelElements.forEach((element, index) => {

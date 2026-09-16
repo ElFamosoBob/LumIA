@@ -17,11 +17,13 @@ class UIManager {
 
         this.loadHTMLelements();
 
+        //Order matters : each of these receives the ones built before it. None of them may reach
+        //back for uiManagerInstance, which does not exist yet while this constructor runs.
         this.tabManager = new TabManager();
-        this.animations = new Animations();
-        this.panelManager = new PanelManager();
+        this.animations = new Animations(this.tabManager);
+        this.panelManager = new PanelManager(this.tabManager);
         this.startButton = new StartButton();
-        this.terminalManager = new TerminalManager();
+        this.terminalManager = new TerminalManager(this.animations);
         this.chatBot = new ChatBot({ panelChatbot: this.panelManager.panelChatbot });
 
         this.initResetProgressButton();

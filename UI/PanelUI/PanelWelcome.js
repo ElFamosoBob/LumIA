@@ -1,9 +1,14 @@
-import uiManagerInstance from '../UIManager.js';
 import { wait } from '../../Utils/UtilFunctions.js';
 
 export class PanelWelcome {
-    constructor() {
 
+    /**
+     * @param {TabManager} tabManager - handed down by the PanelManager, which got it from the
+     *        UIManager. Asked for rather than imported : the UIManager singleton is still being
+     *        built when this panel is created.
+     */
+    constructor(tabManager) {
+        this.tabManager = tabManager;
     }
     /**
      * Bascule sur l'onglet Aruco, lance l'éblouissement global de l'écran, puis attend la fin du flash.
@@ -30,7 +35,7 @@ export class PanelWelcome {
         }
 
 
-        uiManagerInstance.tabManager.unlockAndShowBeginningPanels()
+        this.tabManager.unlockAndShowBeginningPanels()
 
 
         // Allumage aveuglant du système
