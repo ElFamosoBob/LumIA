@@ -1,8 +1,6 @@
 import { wait, normalizeText, levenshtein } from '../../Utils/UtilFunctions.js';
 import { SUSPECTS_BY_TEAM, CURRENT_TEAM } from '../../Utils/Constant.js';
 
-import gameEngineInstance from '../GameEngine.js';
-
 const PASSIONS = ["volley", "tennis", "natation", "basket", "handball", "golf", "escrime", "cyclisme",
     "badminton", "musculation", "boxe", "yoga", "judo", "equitation", "danse", "football", "foot",
     "randonnee", "petanque", "surf", "aviron", "athletisme", "baseball", "canoe", "kayak", "hockey",
@@ -14,8 +12,16 @@ const INSISTANCE = "Es-tu sûr ? J'ai des informations qui pourraient t'intéres
 
 export class ChatBot {
 
-    constructor({ panelChatbot, equipe = CURRENT_TEAM } = {}) {
+    /**
+     * @param {object} options
+     * @param {PanelChatbot} options.panelChatbot - where the conversation is displayed
+     * @param {Function} options.onCulpritFound - called the one time the bot narrows its list down
+     *        to a single name.
+     * @param {string} [options.equipe]
+     */
+    constructor({ panelChatbot, onCulpritFound, equipe = CURRENT_TEAM } = {}) {
         this.panel = panelChatbot;
+        this.onCulpritFound = onCulpritFound;
 
         this.hasStarted = false; // évite de relancer la conversation à chaque réouverture de l'onglet
         this.equipe = equipe;
@@ -178,7 +184,7 @@ export class ChatBot {
                     if (this.listSuspects.length === 0) await this.panel.addMessage("Aucun suspect ne correspond aux critères.", "bot");
                     if (this.listSuspects.length === 1) {
                         await this.panel.addMessage("Le coupable est: " + this.listSuspects, "bot");
-                        gameEngineInstance.notifyChatbotFoundCulprit(); //one of the two conditions needed to unlock the guilty enigma
+                        this.onCulpritFound?.(); //one of the two conditions needed to unlock the guilty enigma
                     }
                     if (this.listSuspects.length >= 2) await this.panel.addMessage("Les suspects sont : " + this.listSuspects.join(", "), "bot");
                 }

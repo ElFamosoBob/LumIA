@@ -1,4 +1,3 @@
-import gameEngineInstance from '../GameLogic/GameEngine.js';
 import { ENIGMA_IDS } from '../Utils/Constant.js';
 import { HELP_IDS } from '../Utils/Constant.js';
 import { IRL_REWARDS } from '../Utils/Constant.js';
@@ -15,6 +14,9 @@ export class TerminalManager {
     constructor(animations) {
         this.animations = animations;
 
+        // Filled in by connect(), called by the GameEngine once it is ready.
+        this.activateFunction = null;
+
         this.btnOpen = document.getElementById('btn-open-terminal');
         this.btnClose = document.getElementById('btn-close-terminal');
         this.btnSubmit = document.getElementById('btn-submit-code');
@@ -23,6 +25,30 @@ export class TerminalManager {
         this.feedbackText = document.getElementById('terminal-feedback');
 
         this.initEventListeners();
+    }
+
+    /**
+     * Wires what a valid code is allowed to trigger. Same pattern as PanelColors.connectCalibration
+     * and PanelAruco.connectVerifyButton.
+     *
+     * @param {(idUnlockable: string) => void} activateFunction
+     */
+    connect(activateFunction) {
+        this.activateFunction = activateFunction;
+    }
+
+    /**
+     * @param {string} idUnlockable - an enigma, or the chatbot
+     * @returns {boolean} false, with a log, if a code is typed before the engine wired its action
+     */
+    askToUnlock(idUnlockable) {
+        if (!this.activateFunction) {
+            console.log(`DEBUG TerminalManager : rien n'est branché, '${idUnlockable}' n'a pas été déverrouillé`);
+            return false;
+        }
+
+        this.activateFunction(idUnlockable);
+        return true;
     }
 
     initEventListeners() {
@@ -57,7 +83,7 @@ export class TerminalManager {
             case 'prompt':
                 this.feedbackText.innerText = "Accès autorisé : Chatbot déverrouillé.";
                 this.feedbackText.style.color = "green";
-                gameEngineInstance.activateEnigma(HELP_IDS.CHATBOT);
+                this.askToUnlock(HELP_IDS.CHATBOT);
                 this.grantPhysicalReward(IRL_REWARDS.R_AFTER_MOVIES);
                 setTimeout(() => this.closeTerminal(), 1500);
                 break;
@@ -65,7 +91,7 @@ export class TerminalManager {
                 if (progressionInstance.isLocked(ENIGMA_IDS.COLORS)) {
                     this.feedbackText.innerText = "Accès autorisé : Colors déverrouillé.";
                     this.feedbackText.style.color = "green";
-                    gameEngineInstance.activateEnigma(ENIGMA_IDS.COLORS);
+                    this.askToUnlock(ENIGMA_IDS.COLORS);
                     this.grantPhysicalReward(IRL_REWARDS.R_AFTER_DATE);
                     setTimeout(() => this.closeTerminal(), 1500);
                 } else {

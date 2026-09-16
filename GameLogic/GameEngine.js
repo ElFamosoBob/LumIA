@@ -5,9 +5,10 @@ import { ArucoEnigma } from './Enigmas/ArucoEnigma.js';
 import { ColorsEnigma } from './Enigmas/ColorsEnigma.js';
 import { GuiltyEnigma } from './Enigmas/GuiltyEnigma.js';
 import { FinalEnigma } from './Enigmas/FinalEnigma.js';
-import { ENIGMA_IDS } from '../Utils/Constant.js';
+import { ENIGMA_IDS, HELP_IDS } from '../Utils/Constant.js';
 import { Timer } from './Timer.js';
 import progressionInstance from './Progression.js';
+import { ChatBot } from './Help/ChatBot.js';
 
 
 import { showError } from '../UI/AlertManager.js';
@@ -71,6 +72,8 @@ class GameEngine {
         }
 
         this.loadEnigmas();
+        this.loadChatbot();
+        this.connectTerminal();
 
         console.log("✅ GameEngine: Modèles IA chargés. Le bouton est actif !");
         uiManagerInstance.hideLoading();
@@ -104,6 +107,27 @@ class GameEngine {
 
     }
 
+    /**
+     * The chatbot is unlocked like an enigma — through activate(), with a tab of its own — but it
+     * has no Enigma class. It does not need one : it waits on what the player types rather than
+     * being updated frame by frame, so the main loop has nothing to do with it and it never
+     * enters the active pool. It has no victory panel either ; it is never "solved".
+     *
+     */
+    loadChatbot() {
+        this.chatBot = new ChatBot({
+            panelChatbot: uiManagerInstance.panelManager.panelChatbot,
+            onCulpritFound: () => this.notifyChatbotFoundCulprit()
+        });
+    }
+
+    /**
+     * Gives the terminal the function to activate a tab 
+    */
+    connectTerminal() {
+        uiManagerInstance.terminalManager.connect((idUnlockable) => this.activate(idUnlockable));
+    }
+
     // Le bouton "Play"
     start() {
         if (this.isRunning) return;
@@ -130,22 +154,24 @@ class GameEngine {
     }
 
     /**
-     * Unlocks an enigma : records it in the Progression, shows its tab button, and starts running
-     * its logic. The three always go together, which is why there is a single entry point.
+     * Hands something to the team : records it in the Progression, shows its tab button, and
+     * starts its logic (put in the ActivePool).
      *
-     * @param {string} idEnigma
+     * Everything listed in UNLOCKABLE_IDS is a valid argument. (so all the Enigmas and chatbot)
+     *
+     * @param {string} idUnlockable - an enigma, or the chatbot
      * @param {boolean} animated - false for the cheat code and for a restored game
      */
-    activateEnigma(idEnigma, animated = true) {
-        progressionInstance.unlock(idEnigma);
+    activate(idUnlockable, animated = true) {
+        progressionInstance.unlock(idUnlockable);
 
         if (animated) {
-            uiManagerInstance.unlockNewTabWithAnimations(idEnigma);
+            uiManagerInstance.unlockNewTabWithAnimations(idUnlockable);
         } else {
-            uiManagerInstance.unlockNewTabWithoutAnimations(idEnigma);
+            uiManagerInstance.unlockNewTabWithoutAnimations(idUnlockable);
         }
 
-        this.putEnigmaIntoTheActivePool(idEnigma);
+        this.putEnigmaIntoTheActivePool(idUnlockable);
         this.saveProgress();
     }
 
@@ -182,19 +208,37 @@ class GameEngine {
         }
     }
 
-    putEnigmaIntoTheActivePool(idEnigma) {
-        const enigma = this.dictionnaryOfEnigmas[idEnigma];
-        if (enigma && !this.activeEnigmas.includes(enigma)) {
+    /**
+     * The active pool holds what the main loop has to update frame by frame. Only things with an
+     * Enigma class belong in it — the chatbot is unlocked the same way but has none, because it
+     * waits on what the player types instead of being driven by the loop.
+     *
+     * @param {string} idUnlockable - an enigma, or the chatbot
+     */
+    putEnigmaIntoTheActivePool(idUnlockable) {
+        const enigma = this.dictionnaryOfEnigmas[idUnlockable];
+
+        if (enigma) {
+            if (this.activeEnigmas.includes(enigma)) {
+                console.log(`DEBUG : l'énigme [${idUnlockable}] est déjà dans le pool actif.`);
+                return;
+            }
+
             enigma.start(); // S'il y a des choses à initialiser dans la classe
             this.activeEnigmas.push(enigma);
-            console.log(`▶️ Énigme [${idEnigma}] ajoutée au pool actif.`);
+            console.log(`▶️ Énigme [${idUnlockable}] ajoutée au pool actif.`);
             this.saveProgress();
-        } else if (!enigma) {
-            //normal for an enigma whose tab exists but whose logic is not written yet (the final one for instance)
-            console.log(`DEBUG : l'énigme [${idEnigma}] n'a pas de classe, seul son onglet est déverrouillé.`);
-        } else {
-            console.log(`DEBUG : l'énigme [${idEnigma}] est déjà dans le pool actif.`);
+            return;
         }
+
+        //expected : a help screen has no Enigma class, its tab is all there is to unlock
+        if (Object.values(HELP_IDS).includes(idUnlockable)) {
+            console.log(`💬 [${idUnlockable}] déverrouillé (il ne tourne pas dans la boucle de jeu).`);
+            return;
+        }
+
+        //not expected : an enigma id with no class behind it means one was never written
+        console.warn(`GameEngine : aucune classe Enigma pour [${idUnlockable}], seul son onglet est déverrouillé.`);
     }
 
     // The main loop, heartbeat of the program
@@ -252,7 +296,7 @@ class GameEngine {
             uiManagerInstance.animations.launchSuccessAnimation(); //toujours, que l'énigme débloque quelque chose ou non
         }
 
-        enigmasToUnlock.forEach(nextId => this.activateEnigma(nextId, !skipAnimations));
+        enigmasToUnlock.forEach(nextId => this.activate(nextId, !skipAnimations));
 
         this.grantPhysicalRewardOf(idEnigma);
 
@@ -295,7 +339,7 @@ class GameEngine {
     tryUnlockGuiltyEnigma() {
         if (!progressionInstance.shouldUnlockGuilty()) return;
 
-        this.activateEnigma(ENIGMA_IDS.GUILTY);
+        this.activate(ENIGMA_IDS.GUILTY);
     }
 
     /**

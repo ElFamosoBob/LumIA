@@ -5,8 +5,6 @@ import { PanelManager } from './PanelUI/PanelManager.js';
 
 import { TerminalManager } from './TerminalManager.js';
 
-import { ChatBot } from '../GameLogic/Help/ChatBot.js';
-
 import { loadProgress, clearProgress } from '../Utils/SaveManager.js';
 import { showConfirmAlert } from './AlertManager.js';
 
@@ -24,7 +22,6 @@ class UIManager {
         this.panelManager = new PanelManager(this.tabManager);
         this.startButton = new StartButton();
         this.terminalManager = new TerminalManager(this.animations);
-        this.chatBot = new ChatBot({ panelChatbot: this.panelManager.panelChatbot });
 
         this.initResetProgressButton();
     }
