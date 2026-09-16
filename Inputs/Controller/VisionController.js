@@ -3,8 +3,6 @@ import { LsfRecognizer } from '../Recognizers/LsfRecognizer.js';
 import { ArucoRecognizer } from '../Recognizers/ArucoRecognizer.js';
 
 import { ENIGMA_IDS } from '../../Utils/Constant.js';
-import uiManagerInstance from '../../UI/UIManager.js';
-
 import { showError } from '../../UI/AlertManager.js';
 
 
@@ -164,8 +162,6 @@ export class VisionController {
         this.arucoRecognizer.detachVideoSource();
 
         // On prévient le joueur visuellement via l'interface
-        if (uiManagerInstance && typeof showError === 'function') {
-            showError(messageInfo);
-        }
+        showError(messageInfo);
     }
 }

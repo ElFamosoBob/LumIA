@@ -1,5 +1,3 @@
-import uiManagerInstance from '../UIManager.js';
-
 import { Tab } from './Tab.js';
 import { showTimer } from '../TimerUI.js';
 
@@ -145,8 +143,17 @@ export class TabManager {
     }
 
     unlockAndShowBeginningPanels() {
-        uiManagerInstance.tabManager.tabs[ENIGMA_IDS.ARUCO].unlockTab(); //we activate here the buttons
-        uiManagerInstance.tabManager.showTab(ENIGMA_IDS.ARUCO);//we make this tab active (open)
+        this.tabs[ENIGMA_IDS.ARUCO].unlockTab(); //we activate here the buttons
+        this.showTab(ENIGMA_IDS.ARUCO);//we make this tab active (open)
+    }
+
+    /**
+     * Game lost : we show only the defeat tab and remove all the others
+     */
+    showDefeatScreen() {
+        this.tabs[SCREEN_IDS.DEFEAT].status = ENIGMA_STATUS.AVAILABLE;
+        this.showTab(SCREEN_IDS.DEFEAT);
+        this.lockInterfaceForEndOfGame();
     }
 
 }

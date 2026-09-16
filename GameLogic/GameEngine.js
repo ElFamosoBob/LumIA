@@ -11,7 +11,6 @@ import progressionInstance from './Progression.js';
 
 
 import { showError } from '../UI/AlertManager.js';
-import { showDefeatScreen } from '../UI/AlertManager.js';
 import { showRewardAlert } from '../UI/AlertManager.js';
 
 import { initOpenCV } from '../Utils/LibraryLoading/LoadOpenCV.js';
@@ -328,7 +327,7 @@ class GameEngine {
         clearProgress();
 
         if (outcome === GAME_OUTCOME.LOST) {
-            showDefeatScreen();
+            uiManagerInstance.tabManager.showDefeatScreen();
         }
     }
 

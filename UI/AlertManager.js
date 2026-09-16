@@ -1,6 +1,7 @@
-import uiManagerInstance from './UIManager.js';
-import { ENIGMA_STATUS } from '../Utils/Constant.js';
-import { SCREEN_IDS } from '../Utils/Constant.js';
+/**
+ * Les modales du jeu : erreur matérielle, objet gagné, confirmation. Rien que du DOM et une
+ * promesse rendue à l'appelant — ce fichier ne connaît ni les onglets, ni le moteur.
+ */
 
 export function showError(messageInfo) {
     const modal = document.getElementById('hardware-error-modal');
@@ -20,16 +21,6 @@ export function showError(messageInfo) {
     }
 }
 
-
-/**
- * Fin de partie perdue : on ouvre l'onglet de défaite (il n'a pas de bouton dans la navigation)
- * puis on coupe tous les accès au jeu.
- */
-export function showDefeatScreen() {
-    uiManagerInstance.tabManager.tabs[SCREEN_IDS.DEFEAT].status = ENIGMA_STATUS.AVAILABLE;
-    uiManagerInstance.tabManager.showTab(SCREEN_IDS.DEFEAT);
-    uiManagerInstance.tabManager.lockInterfaceForEndOfGame();
-}
 
 
 /**
