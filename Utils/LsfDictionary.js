@@ -5,6 +5,12 @@ import { getDistance, getPalmSize, isFingerFolded } from './HandMaths.js';
 //fine
 const REFERENCE_PALM = 0.25;
 
+// "P" et "N" se font avec exactement les mêmes doigts : index et majeur tendus, annulaire et
+// auriculaire pliés. Seul l'écart entre l'index et le majeur les sépare — écartés pour "P",
+// collés pour "N". Une seule frontière, donc aucune bande où les deux pourraient correspondre.
+// L'augmenter rend "N" plus facile à obtenir, la baisser favorise "P".
+const INDEX_MIDDLE_SPREAD = 0.08;
+
 export function whichLetterIsDetected(landmarks) {
 
     const palm = getPalmSize(landmarks);
@@ -52,9 +58,8 @@ export function whichLetterIsDetected(landmarks) {
         return "A";
     }
 
-    // 4. Lettre "P" : Index tendu, majeur tendu mais pointant vers le bas.
-    // On utilise la coordonnée 'y' pour s'assurer que le majeur est plus bas que l'index (sur MediaPipe, Y augmente vers le bas de l'écran).
-    else if (!isIndexFolded && !isMiddleFolded && isRingFolded && isPinkyFolded && d(indexTip, middleTip) > 0.07) {
+    // 4. Lettre "P" : index et majeur tendus et écartés, annulaire et auriculaire pliés
+    else if (!isIndexFolded && !isMiddleFolded && isRingFolded && isPinkyFolded && d(indexTip, middleTip) > INDEX_MIDDLE_SPREAD) {
         return "P";
     }
 
@@ -63,8 +68,8 @@ export function whichLetterIsDetected(landmarks) {
         return "H";
     }
 
-    // 6. Lettre "N" : Index et majeur tendus et COLLÉS (distance < 0.06)
-    else if (!isIndexFolded && !isMiddleFolded && isRingFolded && isPinkyFolded && d(indexTip, middleTip) < 0.08) {
+    // 6. Lettre "N" : la même main que "P", mais index et majeur collés
+    else if (!isIndexFolded && !isMiddleFolded && isRingFolded && isPinkyFolded && d(indexTip, middleTip) <= INDEX_MIDDLE_SPREAD) {
         return "N";
     }
 
