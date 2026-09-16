@@ -143,8 +143,7 @@ export class VisionController {
     }
 
     // InputManager used this to get the Results
-    getResults(tabId) {
-        //console.log(this.currentResults);
+    getResults() {
         return this.currentResults;
     }
 
