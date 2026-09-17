@@ -209,9 +209,9 @@ et désignent un lieu du bâtiment — `PORTE`,`TOILETTES`...
 
 ## 6. Anatomie d'une énigme
 
-Jusqu'à quatre pièces (et au minimum 2, une énigme, un panneau) :
+Jusqu'à quatre éléments (et au minimum 2, une énigme, un panneau) :
 
-| Pièce | Rôle | Exemple |
+| Element | Rôle | Exemple |
 |---|---|---|
 | **L'énigme** | la règle : quand est-elle gagnée ? | [`ArucoEnigma.js`](../GameLogic/Enigmas/ArucoEnigma.js) |
 | **Le panneau** | le DOM : ce que voit le joueur. | [`PanelAruco.js`](../UI/Panels/PanelAruco.js) |
@@ -243,7 +243,7 @@ l'intérieur* d'une énigme non terminée. Ceux-là repartent de zéro.
 
 À la restauration, `TabManager.showProgression()` repeint toute la barre de navigation à partir de la
 progression, et chaque énigme débloquée mais non résolue retourne dans le pool actif. Aucune
-cinématique n'est rejouée.
+animation n'est rejouée.
 
 La sauvegarde est supprimée à la fin de la partie, victoire ou défaite, pour que l'équipe suivante
 parte de zéro. `resetProgression()` dans la console du navigateur et le bouton sur la page d'accueil font de même.
@@ -310,7 +310,7 @@ schéma, tout comme `new Timer(() => this.handleTimeOver())`.
 `gameEngineInstance`, `uiManagerInstance`, `inputManagerInstance`, `audioManagerInstance` et
 `progressionInstance` sont tous créés au chargement de leur module. C'est sans danger **parce que
 seuls des modules situés au-dessus d'eux les importent** : quand `main.js` s'exécute, ils sont
-entièrement construits. D'ailleurs le singleton de gameEngineInstance ne sert plus à rien, il est
+entièrement construits. D'ailleurs le singleton de `gameEngineInstance` ne sert plus à rien, il est
 appelé seulement dans le main (quel language ce js !).
 
 ---
