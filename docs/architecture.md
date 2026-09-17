@@ -165,17 +165,31 @@ Le chemin est `LOCKED → AVAILABLE → RESOLVED` et ne revient pas en arrière.
 ## 5. Arborescence du jeu
 
 ```
-     start()
-        │
-        ▼
-     ARUCO ──────────────► LSF ──────┐
-                                     │  les deux sont nécessaires
-   terminal « prompt »  ──► CHATBOT ─┤
-                          (trouve un │
-                           coupable) ▼
-                                   GUILTY ──────► FINAL ──► partie gagnée
-   terminal « apprentissage » ──► COLORS
+   start()               terminal « prompt »       terminal « apprentissage »
+      │                           │                             │
+      ▼                           ▼                             ▼
+    ARUCO                      CHATBOT                       COLORS
+   (PORTE)                    (COULOIR)                 (BUREAU, TABLEAU)
+      │                           │
+      ▼                           │  désigne            hors chaîne, mais
+     LSF                          │  un coupable        donne des indices
+ (TOILETTES)                      │
+      │                           │
+      └─────────────┬─────────────┘
+                    │  les deux sont nécessaires
+                    ▼
+                 GUILTY
+                (FENETRE)
+                    │
+                    ▼
+                  FINAL
+                    │
+                    ▼
+              partie gagnée
 ```
+
+Entre parenthèses, le lieu débloqué (voir `IRL_REWARDS`). Il s'obtient en résolvant l'énigme, sauf
+`COULOIR` et `BUREAU`, donnés dès que le code est tapé dans le terminal.
 
 - **Aruco** est ouvert par `start()`, et débloque **LSF** une fois résolu.
 - **Colors** et le **chatbot** ne font pas partie de la chaîne : ils sont ouverts par des codes tapés
