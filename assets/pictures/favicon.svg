@@ -1,9 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <title>JEPEIA</title>
+  <title>Lum'IA</title>
   <defs>
     <clipPath id="screen">
       <path d="M5 14.2 L11.2 8 H32 V5 H49.8 L59 14.2 V49.8 L52.8 56 H32 V59 H14.2 L5 49.8 Z"/>
     </clipPath>
+    <radialGradient id="halo" cx="32" cy="27" r="19" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7fd4dc" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7fd4dc" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
   <!-- Contour chanfreine cyan -->
@@ -12,11 +16,32 @@
   <!-- Ecran : bordure epaisse en haut-gauche / bas-droite, fine ailleurs -->
   <path d="M5 14.2 L11.2 8 H32 V5 H49.8 L59 14.2 V49.8 L52.8 56 H32 V59 H14.2 L5 49.8 Z" fill="#244259"/>
 
-  <!-- Grille technique -->
-  <g clip-path="url(#screen)" stroke="#24556a" stroke-width="1.8" fill="none">
-    <path d="M18 0 V64 M32 0 V64 M46 0 V64 M0 18 H64 M0 32 H64 M0 46 H64"/>
+  <g clip-path="url(#screen)">
+    <!-- Grille technique -->
+    <path d="M18 0 V64 M32 0 V64 M46 0 V64 M0 18 H64 M0 32 H64 M0 46 H64" stroke="#24556a" stroke-width="1.8" fill="none"/>
+
+    <!-- Lueur de l'ampoule -->
+    <circle cx="32" cy="27" r="19" fill="url(#halo)"/>
+
+    <!-- Rayons -->
+    <g fill="#69cbd2">
+      <path d="M30.8 8 H33.2 V12.5 H30.8 Z"/>
+      <path d="M9 25.8 H15 V28.2 H9 Z M49 25.8 H55 V28.2 H49 Z"/>
+      <path d="M13.5 12 L15.2 10.3 L19.5 14.6 L17.8 16.3 Z M50.5 12 L48.8 10.3 L44.5 14.6 L46.2 16.3 Z"/>
+      <path d="M13.5 42 L15.2 43.7 L19 39.9 L17.3 38.2 Z M50.5 42 L48.8 43.7 L45 39.9 L46.7 38.2 Z"/>
+    </g>
   </g>
 
-  <!-- Monogramme J -->
-  <path d="M22 17 H42 V38 L36 45 H26 L20 38 V33 H27 V36 L29.5 39 H32.5 L35 36 V24 H22 Z" fill="#69cbd2"/>
+  <!-- Verre allume, coins coupes -->
+  <path d="M26 15 H38 L45 22 V31 L39 38 V41 H25 V38 L19 31 V22 Z" fill="#eef2fb"/>
+
+  <!-- Filament -->
+  <path d="M28.5 41 V33 L27 27 L30 30 L32 25 L34 30 L37 27 L35.5 33 V41" stroke="#69cbd2" stroke-width="2" fill="none" stroke-linejoin="miter"/>
+
+  <!-- Culot -->
+  <g fill="#69cbd2">
+    <path d="M25 43 H39 V46 H25 Z"/>
+    <path d="M25 47.5 H39 V50.5 H25 Z"/>
+    <path d="M27.5 52 H36.5 L34.5 54.5 H29.5 Z"/>
+  </g>
 </svg>
