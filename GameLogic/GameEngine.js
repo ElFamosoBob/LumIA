@@ -40,8 +40,8 @@ class GameEngine {
 
         this.timer = new Timer(() => this.handleTimeOver());
 
-        //to lower the fps rendering : the loop is capped to
-        this.fpsTarget = 10;
+        //to lower the fps rendering : the loop is capped to :
+        this.fpsTarget = 10; //this helps massively to reduce lag in lsf, colors and aruco enigmas
         this.frameInterval = 1000 / this.fpsTarget;
         this.lastFrameTime = 0;
     }
