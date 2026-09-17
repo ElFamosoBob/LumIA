@@ -128,7 +128,7 @@ Dans l'ordre :
 1. refus si la progression indique déjà « résolue »,
 2. `progression.markResolved()`, l'onglet passe au vert,
 3. sortie du pool actif,
-4. animations dans l'odre de :réussite ("énigme réussie"), puis les énigmes débloquées, puis l'objet physique — le tout dans la même
+4. animations dans l'ordre de :réussite ("énigme réussie"), puis les énigmes débloquées, puis l'objet physique — le tout dans la même
    file d'animations, pour qu'elles se jouent l'une après l'autre au lieu de se superposer,
 5. `cleanOfMemory()` sur l'énigme,
 6. nouvelle vérification des deux règles qui peuvent débloquer l'énigme accusation (guilty) ou terminer la partie,
@@ -252,7 +252,7 @@ Petit bug que je connais : vu que le timer est relié à l'heure de l'ordinateur
 qui a commencé il y a longtemps le timer va être à 0 mais vous aurez toujours vos onglets... Vu que c'est un cas
 qui ne devrait pas arriver je n'ai rien fait à ce propos.
 
-Pareil le timer continue à tourner même si l'ordinateur est veille...
+Pareil le timer continue à tourner même si l'ordinateur est en veille...
 
 ---
 
