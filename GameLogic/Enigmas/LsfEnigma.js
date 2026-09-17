@@ -29,7 +29,7 @@ export class LsfEnigma extends Enigma {
         this.panel.updateGestureDebugText(playerState.gestures); //we update the box with the letters detected
     }
 
-    // Le GameEngine appelle cette fonction 15 fois par seconde
+    // Le GameEngine appelle cette fonction 10 fois par seconde
     checkCondition(playerState) {
         if (this.isResolved) return;
 
