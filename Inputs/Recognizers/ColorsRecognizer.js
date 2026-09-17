@@ -32,17 +32,6 @@ const MAX_HUE_GAP = 10;
 const DEFAULT_HUES = COLOR_REFERENCES.map(reference => reference.hue);
 
 
-// Mis a true, la detection dit tout ce qu'elle voit : les cercles nommes ET ceux qu'elle
-// n'a pas su nommer, avec leur HSV, dans la console et sur l'image.
-// Depuis la console du navigateur : colorsDebug(true) / colorsDebug(false).
-let DEBUG_COLORS = false;
-const DEBUG_LOG_INTERVAL = 1000;
-
-window.colorsDebug = (active = true) => {
-    DEBUG_COLORS = active;
-    console.log(`🎨 debug des couleurs ${active ? "activé" : "désactivé"}`);
-};
-
 export class ColorsRecognizer {
 
     constructor(videoElement, canvasElement) {
@@ -62,8 +51,6 @@ export class ColorsRecognizer {
         // variables for the webcam lecture, allocated by attachVideoSource
         this.cap = null;
         this.srcMat = null;
-
-        this.lastDebugLog = 0;
 
         // Les cercles de la derniere image analysee, dans lesquels le reglage vient piocher.
         this.lastCircles = [];
@@ -149,8 +136,6 @@ export class ColorsRecognizer {
             // Affichage : l'overlay est construit a partir du resultat de la detection
             this.drawCirclesOverlay(circlesDetected);
 
-            if (DEBUG_COLORS) this.logCircles(circlesDetected);
-
             currentResults.colors = colorsDetected; //pushing the result to the VisionController
         } catch (err) {
             console.error("Erreur de traitement OpenCV :", err);
@@ -207,7 +192,7 @@ export class ColorsRecognizer {
      *
      * Vector drawing on a transparent canvas, so the webcam flux underneath stays untouched.
      *
-     * In game we just show circle with detectable colors, and in debug we show all circles
+     * In game we show circle with detectable colors in red, others in orange
      * @param {Array<{x: number, y: number, radius: number, name: string, hue: number, saturation: number, value: number, consensus: number}>} circlesDetected
      */
     drawCirclesOverlay(circlesDetected) {
@@ -243,7 +228,6 @@ export class ColorsRecognizer {
             this.ctx.fill();
             //if the circle is a known colors it is red, if not orange.
             if (calibrating) this.drawCircleNumber(index + 1, x, y, scale);
-            else if (DEBUG_COLORS) this.drawCircleLabel(circle, x, y, radius, scale);
         }
     }
 
@@ -282,35 +266,6 @@ export class ColorsRecognizer {
 
         this.ctx.fillStyle = circle.name === "Unknown" ? "#FF9500" : "#00FF00";
         this.ctx.fillText(text, middle, top + height - 4 * scale);
-    }
-
-    /**
-     * Write in the console all the circle detected, their HSV values and what their color is
-     *
-     * @param {Array<{x: number, y: number, radius: number, name: string, hue: number, saturation: number, value: number, consensus: number}>} circlesDetected
-     */
-    logCircles(circlesDetected) {
-        const now = performance.now();
-        if (now - this.lastDebugLog < DEBUG_LOG_INTERVAL) return;
-        this.lastDebugLog = now;
-
-        if (circlesDetected.length === 0) {
-            console.log("🎨 aucun cercle trouvé par HoughCircles sur cette image");
-            return;
-        }
-
-        console.log(`🎨 ${circlesDetected.length} cercle(s) trouvé(s) :`);
-        console.table(circlesDetected.map(circle => ({
-            couleur: circle.name,
-            H: circle.hue,
-            S: circle.saturation,
-            V: circle.value,
-            "écart à la référence": this.gapToClosestReference(circle.hue),
-            "pixels d'accord": `${Math.round(circle.consensus * 100)} %`,
-            rayon: circle.radius,
-            x: circle.x,
-            y: circle.y
-        })));
     }
 
     /**
