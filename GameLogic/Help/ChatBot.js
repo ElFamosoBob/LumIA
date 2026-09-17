@@ -1,5 +1,5 @@
 import { wait, normalizeText, levenshtein } from '../../Utils/UtilFunctions.js';
-import { SUSPECTS } from '../../Utils/Constant.js';
+import { SUSPECTS } from '../../Config/GameConfig.js';
 
 const PASSIONS = ["volley", "tennis", "natation", "basket", "handball", "golf", "escrime", "cyclisme",
     "badminton", "musculation", "boxe", "yoga", "judo", "equitation", "danse", "football", "foot",

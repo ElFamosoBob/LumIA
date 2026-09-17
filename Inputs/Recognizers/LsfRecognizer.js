@@ -1,4 +1,4 @@
-import { whichLetterIsDetected } from '../../Utils/LsfDictionary.js';
+import { whichLetterIsDetected } from './LsfDictionary.js';
 import { initMediapipe, DrawingUtils, HandLandmarker } from '../../Utils/LibraryLoading/LoadMediapipe.js';
 
 const PLAY_ZONE_ZOOM = 0.7;

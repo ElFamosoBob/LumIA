@@ -1,5 +1,6 @@
 import { Enigma } from './Enigma.js';
-import { ENIGMA_IDS, IRL_REWARDS, LSF_HOLD_MS } from '../../Utils/Constant.js';
+import { ENIGMA_IDS } from '../../Utils/Constant.js';
+import { IRL_REWARDS, LSF_HOLD_MS } from '../../Config/GameConfig.js';
 
 
 // Au-delà de cet écart entre deux frames, on considère qu'on a cessé de regarder (onglet quitté)

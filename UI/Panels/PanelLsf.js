@@ -1,5 +1,5 @@
 import audioManagerInstance from '../../Audio/AudioManager.js';
-import { LSF_HOLD_MS } from '../../Utils/Constant.js';
+import { LSF_HOLD_MS } from '../../Config/GameConfig.js';
 
 export class PanelLsf {
 

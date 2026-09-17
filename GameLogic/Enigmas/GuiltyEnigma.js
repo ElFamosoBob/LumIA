@@ -1,5 +1,6 @@
 import { Enigma } from './Enigma.js';
-import { ENIGMA_IDS, IRL_REWARDS, SUSPECTS } from '../../Utils/Constant.js';
+import { ENIGMA_IDS } from '../../Utils/Constant.js';
+import { IRL_REWARDS, SUSPECTS } from '../../Config/GameConfig.js';
 import { normalizeText } from '../../Utils/UtilFunctions.js';
 
 import { showConfirmAlert } from '../../UI/AlertManager.js';

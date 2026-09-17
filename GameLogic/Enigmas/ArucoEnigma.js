@@ -1,5 +1,6 @@
 import { Enigma } from './Enigma.js';
-import { ENIGMA_IDS, IRL_REWARDS } from '../../Utils/Constant.js';
+import { ENIGMA_IDS } from '../../Utils/Constant.js';
+import { IRL_REWARDS } from '../../Config/GameConfig.js';
 import { ARUCO_CARDS } from '../../Config/ArucoBoard.js';
 
 

@@ -1,6 +1,7 @@
 import { Enigma } from './Enigma.js';
 import { Maze, DIRECTIONS, CHARACTERS } from '../MiniGames/Maze.js';
-import { ENIGMA_IDS, IRL_REWARDS } from '../../Utils/Constant.js';
+import { ENIGMA_IDS } from '../../Utils/Constant.js';
+import { IRL_REWARDS } from '../../Config/GameConfig.js';
 
 
 // One action is committed every 6 seconds, whatever the players do in between.

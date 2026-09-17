@@ -1,6 +1,6 @@
 import { ENIGMA_IDS } from '../Utils/Constant.js';
 import { HELP_IDS } from '../Utils/Constant.js';
-import { IRL_REWARDS } from '../Utils/Constant.js';
+import { IRL_REWARDS } from '../Config/GameConfig.js';
 import progressionInstance from '../GameLogic/Progression.js';
 import { showRewardAlert } from '../UI/AlertManager.js';
 import audioManagerInstance from '../Audio/AudioManager.js';
