@@ -2,8 +2,8 @@ export class KeyboardController {
     constructor() {
         // code -> nom de l'événement déclenché sur document
         this.cheatCodes = {
-            "uio": "cheatcode_force_resolve",
-            "time": "cheatcode_add_time",
+            "iwanttocheat": "cheatcode_force_resolve",
+            "iwanttime": "cheatcode_add_time",
         };
         this.maxCheatCodeLength = Math.max(...Object.keys(this.cheatCodes).map(code => code.length));
         this.keyBuffer = "";
