@@ -50,7 +50,7 @@ export function clearProgress() {
     }
 }
 
-//pratique pour l'équipe qui installe le jeu : taper resetProgression() dans la console remet tout à zéro
+//taper resetProgression() dans la console remet tout à zéro
 window.resetProgression = () => {
     clearProgress();
     console.log("🧹 Progression effacée. Rechargez la page pour une partie neuve.");
