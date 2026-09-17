@@ -20,7 +20,7 @@ réglages avec leur effet. Le fonctionnement général (boucle, résolution, pro
 Le code `apprentissage` donne aussi l'objet `BUREAU`. Le chatbot n'est pas une énigme au sens du code
 (pas de classe `Enigma`), mais il fait partie du schmilblick.
 
-**Toutes les énigmes** se résolvent avec le ==code de triche== `iwanttocheat`, tapé n'importe où quand leur onglet est ouvert.
+**Toutes les énigmes** se résolvent avec le __code de triche__ `iwanttocheat`, tapé n'importe où quand leur onglet est ouvert.
 L'autre cheatcode est `iwanttime` qui rajoute 3mn au timer.
 
 ---
