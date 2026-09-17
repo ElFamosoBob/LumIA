@@ -8,21 +8,20 @@ réglages avec leur effet. Le fonctionnement général (boucle, résolution, pro
 
 ## Vue d'ensemble
 
-| Énigme | Id | Ouverte par | Se joue avec | Débloque | Objet gagné |
+| Énigme | Id | Ouverte par | Se joue avec | Débloque | Lieu débloqué |
 |---|---|---|---|---|---|
 | [Vrai ou faux](#vrai-ou-faux--aruco) | `aruco` | `start()` | caméra | LSF | `PORTE` |
 | [Signes](#signes--lsf) | `lsf` | Aruco résolue | caméra | *(participe à l'accusation)* | `TOILETTES` |
 | [Apprentissage coloré](#apprentissage-coloré--colors) | `colors` | terminal `apprentissage` | caméra | — | `TABLEAU` |
 | [Chatbot](#le-chatbot) | `chatbot` | terminal `prompt` | clavier | *(participe à l'accusation)* | `COULOIR` |
-| [L'accusation](#laccusation--guilty) | `guilty` | LSF + chatbot | clavier | Finale | `FENETRE` |
+| [L'accusation](#laccusation--guilty) | `guilty` | LSF résolue + chatbot | clavier | Finale | `FENETRE` |
 | [Énigme finale](#énigme-finale--final) | `final` | accusation résolue | clavier | fin de partie | — |
 
 Le code `apprentissage` donne aussi l'objet `BUREAU`. Le chatbot n'est pas une énigme au sens du code
-(pas de classe `Enigma`), mais il fait partie de la chaîne.
+(pas de classe `Enigma`), mais il fait partie du schmilblick.
 
-**Toutes les énigmes** se résolvent avec le 
-## ==code de triche== 
-`iwanttocheat`, tapé n'importe où quand leur onglet est ouvert.
+**Toutes les énigmes** se résolvent avec le ==code de triche== `iwanttocheat`, tapé n'importe où quand leur onglet est ouvert.
+L'autre cheatcode est `iwanttime` qui rajoute 3mn au timer.
 
 ---
 
@@ -54,7 +53,7 @@ Au bout de la fenêtre, trois verdicts possibles :
   pas mauvaise réponse) ;
 - et si les huit faces correctes ont été vues au moins une fois à leur place → victoire.
 
-**Attention** : `correctId` dans `ArucoBoard.js` n'est pas « la face vrai » mais la face qui répond
+**Be aware** : `correctId` dans `ArucoBoard.js` n'est pas « la face vrai » mais la face qui répond
 juste. Pour une affirmation fausse, c'est la face « faux ».
 
 | Réglage | Fichier | Valeur | Effet |
@@ -104,7 +103,7 @@ distingue — c'est le réglage le plus sensible de cette énigme.
 
 **Pour le joueur.** Cinq pastilles de couleur sont posées sur la table. Toutes les 6 secondes, la
 caméra regarde **laquelle est cachée** (par une main) et déplace un personnage dans un labyrinthe à
-l'écran. Personne ne dit quelle couleur fait quoi : c'est à l'équipe de le découvrir.
+l'écran. Rien ne dit quelle couleur fait quoi : c'est à l'équipe de le découvrir.
 
 | Pièce | Fichier |
 |---|---|
@@ -207,7 +206,7 @@ annoncé un nom.
 sans accents, sans ponctuation et sans casse. Chaque accusation passe par une fenêtre de confirmation,
 pour qu'une faute de frappe ne coûte rien.
 
-Le nombre d'essais n'est pas limité. À la place, chaque erreur impose une attente croissante, ce qui suffit à empêcher d'essayer les dix prénoms.
+Le nombre d'essais n'est pas limité. À la place, chaque erreur impose une attente croissante.
 
 | Réglage | Valeur | Effet |
 |---|---|---|
