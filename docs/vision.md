@@ -4,6 +4,8 @@ Comment les trois énigmes caméra transforment une image en information de jeu.
 **pourquoi** les réglages fonctionnent comme ils le font ; la liste des réglages et leur effet côté jeu
 est dans [enigmes.md](enigmes.md).
 
+Avant d'aller plus loin pose-toi la question de si tu a envie de t'infliger tout ça.
+
 | Énigme | Bibliothèque | Recognizer | Ce qu'il fournit au jeu |
 |---|---|---|---|
 | Vrai ou faux | OpenCV (module ArUco) | [ArucoRecognizer.js](../Inputs/Recognizers/ArucoRecognizer.js) | position de chaque marqueur sur sa feuille, dans le repère de la feuille |
@@ -29,7 +31,9 @@ L'énigme le relit juste après via `input.getState()`.
 ### La résolution
 
 La caméra est demandée en **1280×720**, en `ideal` et non en `exact` : si elle refuse, on prend ce
-qu'elle propose plutôt que d'échouer. Chaque recognizer lit ensuite la résolution réellement obtenue.
+qu'elle propose plutôt que d'échouer. Chaque recognizer lit ensuite la résolution réellement obtenue. 
+
+A savoir : Aruco marche assez mal en dessous de la 720p.
 
 Les recognizers OpenCV allouent leurs matrices dans `attachVideoSource()`, appelée seulement quand la
 première image est décodée — avant, les dimensions de la vidéo valent 0. Juste avant, `video.width` et
@@ -46,7 +50,7 @@ image pour qu'il ne reste pas figé le dessin de l'énigme précédente.
 
 Les deux sont embarquées dans `vendor/` et chargées depuis [`Utils/LibraryLoading/`](../Utils/LibraryLoading).
 
-OpenCV et MediaPipe sont tous deux compilés en WebAssembly avec Emscripten, dont les scripts
+OpenCV et MediaPipe sont tous deux compilés en WebAssembly, dont les scripts
 s'appuient sur une variable globale `window.Module`. Pour qu'OpenCV n'écrase pas celle de MediaPipe,
 [`LoadOpenCV.js`](../Utils/LibraryLoading/LoadOpenCV.js) la met de côté pendant son propre chargement,
 puis la restaure. Si un jour l'une des deux bibliothèques se charge mal quand l'autre est présente,
@@ -55,9 +59,9 @@ c'est ici qu'il faut regarder en premier.
 ### La mémoire OpenCV
 
 Les matrices OpenCV (`cv.Mat`) vivent dans la mémoire WebAssembly, que le ramasse-miettes de JavaScript
-ne voit pas. **Toute matrice créée doit être libérée à la main avec `.delete()`**, sinon elle fuit (si tu le dis mon grand je te crois).
+ne voit pas. **Toute matrice créée doit être libérée à la main avec `.delete()`**, sinon elle fuit (hope avec ses ptites pattes et ses ptites dents elle mange ta RAM).
 Les matrices temporaires de chaque image sont libérées dans des blocs `try / finally`, pour l'être même
-en cas d'erreur.
+en cas d'erreur (en théorie).
 
 Colors libère ses matrices de travail à sa résolution (`cleanOfMemory`). **Aruco ne le fait pas** : ses
 quelques objets restent alloués jusqu'au rechargement de la page.
@@ -94,8 +98,8 @@ Le **centre d'un marqueur** est la moyenne de ses quatre coins.
 
 ### Redresser la feuille : l'homographie
 
-La caméra voit le plateau de biais : un rectangle y apparaît comme un quadrilatère quelconque.
-L'**homographie** est la transformation qui ramène ce quadrilatère au rectangle réel.
+La caméra voit le plateau en général avec un peu de biais : un rectangle y apparaît un peu déformé.
+L'**homographie** est là pour résoudre ce problème ! (on dit merci homographiiiiie)
 
 Chaque feuille porte un marqueur à chacun de ses quatre coins (voir
 [`Config/ArucoBoard.js`](../Config/ArucoBoard.js)). Dès que les quatre sont connus,
@@ -104,9 +108,9 @@ rectangle de référence de **262 × 175** (`SHEET_SIZE_MM`). Chaque marqueur d�
 par `cv.perspectiveTransform` dans ce repère.
 
 C'est ce qui rend l'énigme indépendante de l'angle de la caméra : les positions attendues des cartes
-sont écrites une fois pour toutes dans ce repère.
+sont écrites dans ce repère.
 
-**Ces unités ne sont pas de vrais millimètres.** Une seule caméra ne voit pas la profondeur : une feuille
+**Ces unités ne sont pas de vrais millimètres.** La caméra ne voit pas la profondeur : une feuille
 A3 vue de haut donne la même image qu'une feuille A4 vue de plus près. Le repère ne dépend que des quatre
 coins, donc seules comptent les **proportions** : on peut imprimer le plateau à n'importe quelle échelle,
 tant que tout est agrandi ensemble (feuille, marqueurs, emplacements des cartes). Les tolérances comme
@@ -114,7 +118,7 @@ tant que tout est agrandi ensemble (feuille, marqueurs, emplacements des cartes)
 en distance réelle. La seule vraie limite physique : chaque marqueur doit couvrir assez de pixels pour être
 lu, ce qui dépend de sa taille **et** de la hauteur de la caméra (et de la résolution de cette dernière logiquement).
 
-### Tolérer les mains qui passent
+### Tolérer les mains qui passent (et autres perturbations de la force)
 
 Pendant le jeu, des mains cachent régulièrement un coin. Pour ne pas perdre la feuille à chaque fois, le
 recognizer garde **deux niveaux de mémoire** :
@@ -134,12 +138,6 @@ C'est l'énigme qui trie, en comparant `marker.sheetID` à la feuille de chaque 
 
 Une feuille dont les quatre coins sont présents est déclarée visible même si l'homographie échoue : «
 visible » signifie que l'équipe a bien cadré son plateau.
-
-### Pistes de réglage
-
-- La grille CLAHE de 4×4 découpe une image 1280×720 en zones de 320×180 pixels. Des zones plus petites
-  (8×8) s'adapteraient mieux à un éclairage très inégal, au prix d'un peu plus de bruit.
----
 
 ## 3. Colors — reconnaître des pastilles de couleur
 
@@ -177,7 +175,7 @@ détectés, essayez de changer ces valeurs.
 
 ### Identifier la couleur
 
-On travaille en **HSV** (teinte, saturation, luminosité) plutôt qu'en RGB : la teinte dit *quelle*
+On travaille en **HSV** (teinte, saturation, luminosité) : la teinte dit quelle
 couleur, indépendamment de l'éclairage, qui joue surtout sur la luminosité. **Dans OpenCV, la teinte va
 de 0 à 179**, pas de 0 à 359.
 
@@ -198,13 +196,11 @@ tort, un « inconnu » ne fait rien.
 
 ### La roue des teintes reboucle
 
-La teinte est un angle : 179 et 1 sont voisins. Deux conséquences dans le code :
+La teinte est un angle : 179 et 1 sont voisins. Conséquence :
 
 - l'écart entre deux teintes se calcule modulo 180 (`hueDistance`) : entre 178 et 2 il y a 4, pas 176 ;
-- la teinte d'un cercle est la **plus fréquente** (histogramme), pas la moyenne. Sur du rouge, les
-  pixels se répartissent autour de 0 et de 179 ; leur moyenne vaudrait 90 — du cyan.
 
-### Les couleurs de référence
+### Les couleurs de référence (obtenues avec une imprimante classique)
 
 | Couleur | Teinte de référence | Teinte du fichier source |
 |---|---|---|
@@ -262,8 +258,8 @@ image 1280×720 ──► centre (70 %) recopié et agrandi en 640×360 ──�
 
 **Le recadrage** (`PLAY_ZONE_ZOOM = 0.7`). La caméra est loin des joueurs : leurs mains ne couvrent
 qu'une petite partie de l'image. On n'envoie à MediaPipe que le centre, agrandi. Le modèle travaille en
-interne sur une image réduite (192*192) ; sans ce zoom, une main réduite depuis la pleine image n'occupe plus que
-quelques pixels et perd ses détails.
+interne sur une image réduite (192x192) ; sans ce zoom, la compression de la 720p à 192x192 est trop forte
+et on a du mal à reconnaître les signes.
 
 **MediaPipe** tourne en mode `VIDEO` (il exploite l'image précédente pour suivre les mains), sur **CPU**,
 et détecte **jusqu'à 4 mains** — autant que de lettres dans « PLAN ». Plus on augmente le nombre de mains
@@ -271,7 +267,7 @@ detéctées, plus on augmente le lag de manière ostensible.
 
 **Le calque** redessine l'image *analysée*, pas la vidéo en direct, puis les mains par-dessus. Sinon
 les points, qui arrivent avec le délai d'une inférence, traîneraient derrière une image qui a déjà
-avancé.
+avancé (c'est du détail).
 
 ### Les 21 points d'une main
 
@@ -287,14 +283,7 @@ avancé.
         1──────0─────            0 : poignet
        pouce
 ```
-
-| Doigt | Base | Milieu | Bout |
-|---|---|---|---|
-| pouce | 1 | 2 | 4 |
-| index | 5 | 6 | 8 |
-| majeur | 9 | 10 | 12 |
-| annulaire | 13 | 14 | 16 |
-| auriculaire | 17 | 18 | 20 |
+Il y a le modèle de l'image de la main dans la librairie Mediapipe.
 
 ### Doigt plié ou tendu
 
