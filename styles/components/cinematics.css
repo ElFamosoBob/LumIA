@@ -1,8 +1,5 @@
 /* ==========================================================
    CINÉMATIQUE DE DÉVERROUILLAGE
-   Réf. : les consoles de Prometheus. Un instrument qui s'allume,
-   cherche, verrouille sa cible, puis se referme — et non un objet
-   qui vole à travers l'écran.
 
    Cinq temps, 5 s en tout (UNLOCK_ANIMATION_MS dans UI/Animations.js
    doit rester à la même valeur) :
@@ -65,13 +62,6 @@
        ferait quand même apparaître une barre de défilement. */
     overflow: hidden;
 
-    /*
-     * L'or, et non le bleu du reste du site. C'est la couleur des consoles de
-     * nef de Prometheus, et surtout celle de l'onglet qui va apparaître : la
-     * cinématique annonce une énigme JOUABLE, donc elle parle déjà la langue
-     * de l'orange « il reste à faire ». Ces jetons sont locaux — l'or n'a pas
-     * à exister ailleurs dans la palette.
-     */
     --cine-gold: #ffb43c;
     --cine-gold-pale: #ffe3ab;
     --cine-gold-dim: #8a5f1e;

@@ -22,18 +22,6 @@
     --font-mono: 'Courier New', Courier, monospace;
 
     /* --- Direction « Orrery » ---------------------------------------------------
-       Les formes viennent des consoles de Prometheus (anneaux concentriques,
-       coins coupés, filets, capitales très tracées). Les COULEURS viennent de
-       la direction artistique du jeu, relevée sur deux pièces de référence :
-         - jepeia_site/background.svg, le cadre d'interface du site ;
-         - Impressions-23-09-21/2-DÉCOR/affiche de recrutement.pdf, dont le
-           fond indigo, le maillage bleu et le code vert donnent la palette.
-       Le bleu #5895d6 porte à lui seul le maillage ET les bandeaux de
-       l'affiche : c'est la couleur d'identité, celle qu'on dépense en un
-       seul endroit à la fois.
-
-       Ces variables ne changent rien à elles seules : un panneau y accède en
-       portant la classe .orrery (voir components/orrery.css).
 
        Police d'affichage : JepeiaSans partout, y compris les titres/labels,
        pour ne dépendre d'aucune police système. (nan c'est juste que j'aime bien) */

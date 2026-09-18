@@ -1,10 +1,6 @@
 /* ==========================================================
    DIRECTION « ORRERY » — le vocabulaire commun des panneaux repris
 
-   Formes : les consoles de nef de Prometheus (Territory Studio).
-   Couleurs : la direction artistique du jeu — background.svg et
-   l'affiche de recrutement. Les jetons sont dans base.css.
-
    Un panneau bascule dans cette identité en ajoutant la classe
    "orrery" à côté de "view-panel" dans index.html.
 
@@ -19,7 +15,6 @@
    de la fenêtre.
 
    Ce qui tient l'identité partout ailleurs :
-     - la typo (capitales très tracées, chasse fixe pour les étiquettes) ;
      - la palette (une seule couleur saturée, le bleu #5895d6) ;
      - les filets fins et les coins coupés là où un élément a
        vraiment besoin d'un contour ;
