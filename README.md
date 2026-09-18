@@ -7,6 +7,10 @@ d'autres en tapant des réponses.
 Site 100 % statique et hors ligne : aucun CDN, aucune dépendance chargée à l'exécution, aucune
 étape de build.
 
+## Si vous avez quelconque problème : bug, question...
+
+Merci d'envoyer un mail à l'adresse lumia.projet@proton.me
+
 ## Lancer le site
 
 Le code est fait de modules ES : ouvrir `index.html` directement (`file://`) ne marche pas, le
