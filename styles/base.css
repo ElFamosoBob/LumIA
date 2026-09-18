@@ -35,12 +35,9 @@
        Ces variables ne changent rien à elles seules : un panneau y accède en
        portant la classe .orrery (voir components/orrery.css).
 
-       Police d'affichage : le titre veut une grasse étroite. Aucune n'est
-       embarquée dans assets/fonts pour l'instant, donc la pile essaie les
-       condensées système avant de retomber sur JepeiaSans. Poser un fichier
-       Barlow Condensed à côté de dejavu-sans.bold.ttf suffirait à la servir
-       partout sans toucher au reste. */
-    --orr-font-display: 'Barlow Condensed', 'Oswald', 'Arial Narrow', var(--font-main);
+       Police d'affichage : JepeiaSans partout, y compris les titres/labels,
+       pour ne dépendre d'aucune police système. (nan c'est juste que j'aime bien) */
+    --orr-font-display: var(--font-main);
 
     --orr-void: #0b0d1c;
     /* le noir bleuté du fond, un cran sous l'indigo de l'affiche */
