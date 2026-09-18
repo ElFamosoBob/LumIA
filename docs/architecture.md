@@ -2,7 +2,7 @@
 
 Comment le code est organisé, et pourquoi.
 
-**Si jamais il y a quelconque problème, bug problématique merci de contacter :**
+**Si jamais il y a quelconque problème, bug problématique merci de contacter : lumia.projet@proton.me**
 
 À lire en premier pour reprendre le projet. Le détail de chaque énigme est dans
 [enigmes.md](enigmes.md), la vision par ordinateur dans [vision.md](vision.md), et que faire quand la
