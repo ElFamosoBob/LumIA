@@ -100,6 +100,10 @@ distingue — c'est le réglage le plus sensible de cette énigme.
 
 ## Apprentissage coloré — `colors`
 
+**PLUS GROS PROBLEME CONNU : UN RAYON DE SOLEIL OU UNE LUMIERE QUI CHANGE APRES LA CALIBRATION FAIS QU'UN CERCLE N'EST PAS DETECTE**
+
+Si la lumière a changé et qu'on ne peut pas la remettre comme avant : recalibrer les couleurs et si un rayon de soleil s'invite, il vaut mieux essayer de le cacher.
+
 **Pour le joueur.** Cinq pastilles de couleur sont posées sur la table. Toutes les 6 secondes, la
 caméra regarde **laquelle est cachée** (par une main) et déplace un personnage dans un labyrinthe à
 l'écran. Rien ne dit quelle couleur fait quoi : c'est à l'équipe de le découvrir.
