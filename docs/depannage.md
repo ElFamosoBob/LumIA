@@ -10,7 +10,7 @@ leurs erreurs et leurs messages `DEBUG`.
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| Page blanche, erreur CORS / « module » dans la console | page ouverte en `file://` | servir le dossier en HTTP (`python3 -m http.server`, puis `http://localhost:8000`) |
+| Page blanche, erreur CORS / « module » dans la console | page ouverte en `file://` | servir le dossier en HTTP (`python3 -m http.server 4000`, puis `http://localhost:4000`) |
 | « Erreur d'initialisation MediaPipe » | fichiers de `vendor/mediapipe/` absents ou déplacés | vérifier les chemins dans [LoadMediapipe.js](../Utils/LibraryLoading/LoadMediapipe.js) |
 | Chargement d'OpenCV sans fin | `vendor/opencv.js` absent ou déplacé | vérifier le chemin dans [LoadOpenCV.js](../Utils/LibraryLoading/LoadOpenCV.js) |
 
@@ -28,7 +28,7 @@ Les erreurs d'allumage sont traduites en message à l'écran par
 | « Caméra indisponible » | déjà utilisée (Zoom, autre onglet…) | fermer l'autre application, recharger |
 | « La caméra a été déconnectée » | câble débranché en cours de partie | rebrancher, recharger : la progression est sauvegardée |
 
-Avec plusieurs caméras, le navigateur prend celle choisie dans ses paramètres de site.
+Avec plusieurs caméras, le navigateur prend celle choisie par l'utilisateur quand il accepte de donner accès au flux vidéo (après avoir cliquer sur )
 
 ## 3. La détection échoue
 
@@ -44,7 +44,7 @@ Avec plusieurs caméras, le navigateur prend celle choisie dans ses paramètres 
 ### Colors (Apprentissage coloré)
 
 **PLUS GROS PROBLEME CONNU : UN RAYON DE SOLEIL OU UNE LUMIERE QUI CHANGE APRES LA CALIBRATION**
-Si la lumière a changé et qu'on ne peut pas la remettre comme avant : recalibrer les couleurs et si un rayon de soleil s'invite, il vaut mieux essayer de le cacher.
+Si la lumière a changée et qu'on ne peut pas la remettre comme avant : recalibrer les couleurs et si un rayon de soleil s'invite, il vaut mieux essayer de le cacher.
 
 - **Aucun cercle trouvé** : caméra trop loin ou trop près, ou contraste
   insuffisant entre la pastille et son contour.
@@ -64,12 +64,12 @@ utilisant la caméra ou le GPU aide aussi.
 ## 4. Sauvegarde
 
 La progression est gardée dans le `localStorage` du navigateur
-([SaveManager.js](../GameLogic/SaveManager.js)). Un rechargement (F5) reprend donc où on en était.
+([SaveManager.js](../GameLogic/SaveManager.js)). Recharger la page fait donc reprendre où on en était.
 
-Pour **repartir d'une partie neuve**, recharger la page, et cliquer sur le magnifique bouton permettant de réinitialiser la progression.
+Pour **repartir d'une partie neuve**, rechargez la page, et cliquer sur le magnifique bouton permettant de réinitialiser la progression.
 
 Ce qui **n'est pas** sauvegardé : la conversation du chatbot, l'avancée à l'intérieur d'une énigme non
-terminée, et les essais restants de l'accusation et de l'énigme finale (un F5 les remet à zéro).
+terminée, et les essais restants de l'accusation et de l'énigme finale.
 
 ## 5. Codes de triche
 
