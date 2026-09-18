@@ -14,11 +14,10 @@ réglages avec leur effet. Le fonctionnement général (boucle, résolution, pro
 | [Signes](#signes--lsf) | `lsf` | Aruco résolue | caméra | *(participe à l'accusation)* | `TOILETTES` |
 | [Apprentissage coloré](#apprentissage-coloré--colors) | `colors` | terminal `apprentissage` | caméra | — | `TABLEAU` |
 | [Chatbot](#le-chatbot) | `chatbot` | terminal `prompt` | clavier | *(participe à l'accusation)* | `COULOIR` |
-| [L'accusation](#laccusation--guilty) | `guilty` | LSF résolue + chatbot | clavier | Finale | `FENETRE` |
+| [L'accusation](#laccusation--guilty) | `guilty` | LSF résolue + chatbot | clavier | Enigme finale | `FENETRE` |
 | [Énigme finale](#énigme-finale--final) | `final` | accusation résolue | clavier | fin de partie | — |
 
-Le code `apprentissage` donne aussi l'objet `BUREAU`. Le chatbot n'est pas une énigme au sens du code
-(pas de classe `Enigma`), mais il fait partie du schmilblick.
+Le code `apprentissage` donne aussi l'objet `BUREAU`. Ce code est trouvé après avoir fait l'énigme date dans le jeu et il débloque le lieu `BUREAU` et l'énigme `colors`. Le chatbot n'est pas une énigme au sens du code (pas de classe `Enigma`), mais il fait partie du schmilblick.
 
 **Toutes les énigmes** se résolvent avec le __code de triche__ `iwanttocheat`, tapé n'importe où quand leur onglet est ouvert.
 L'autre cheatcode est `iwanttime` qui rajoute 3mn au timer.
@@ -31,7 +30,7 @@ L'autre cheatcode est `iwanttime` qui rajoute 3mn au timer.
 côté « vrai » ou « faux », la pose à son emplacement sur le plateau de jeu, puis clique sur
 **Vérifier**. L'énigme annonce combien de cartes sont justes et bien placées.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Énigme | [GameLogic/Enigmas/ArucoEnigma.js](../GameLogic/Enigmas/ArucoEnigma.js) |
 | Panneau | [UI/Panels/PanelAruco.js](../UI/Panels/PanelAruco.js) |
@@ -39,8 +38,8 @@ côté « vrai » ou « faux », la pose à son emplacement sur le plateau de je
 | Contenu | [Config/ArucoBoard.js](../Config/ArucoBoard.js) — affirmations, marqueurs, disposition |
 
 **Fonctionnement.** Chaque carte porte un marqueur Aruco différent sur chaque face. Le recognizer
-repère les coins des deux feuilles, redresse l'image, et fournit la position de chaque marqueur **en
-millimètres** sur sa feuille. Le recognizer tourne en permanence tant que l'onglet est ouvert, ce qui
+repère les coins des deux feuilles, redresse l'image, et fournit la position de chaque marqueur
+sur sa feuille. Le recognizer tourne en permanence tant que l'onglet est ouvert, ce qui
 lui permet de mémoriser les coins, mais l'énigme ignore ses résultats en dehors d'une vérification :
 le clic sur **Vérifier** ouvre une fenêtre de quelques dizaines d'images, pendant laquelle elle compte
 où chaque marqueur a été vu.
@@ -58,7 +57,7 @@ juste. Pour une affirmation fausse, c'est la face « faux ».
 
 | Réglage | Fichier | Valeur | Effet |
 |---|---|---|---|
-| `POSITION_TOLERANCE_MM` | ArucoEnigma | 10 | écart toléré entre un marqueur et son emplacement. Plus grand = cartes mal posées acceptées |
+| `POSITION_TOLERANCE_MM` | ArucoEnigma | 10 | écart toléré entre un marqueur et son emplacement, en unités de feuille (262 de large, voir vision.md). Plus grand = cartes mal posées acceptées |
 | `FRAMES_PER_CHECK` | ArucoEnigma | 25 | durée d'une vérification, soit ~2,5 s à 10 fps. Une carte vue **une seule fois** suffit |
 | `MAX_FRAMES_WITHOUT_SHEET` | ArucoEnigma | 23 | au-delà, la feuille est jugée hors champ et le score n'est pas donné |
 | `MAX_CORNER_AGE_FRAMES` | ArucoRecognizer | 200 | un coin caché (par une main) reste utilisable ~20 s |
@@ -72,7 +71,7 @@ juste. Pour une affirmation fausse, c'est la face « faux ».
 caméra **en même temps**, et tenir la position un court instant. Une barre se remplit et un son
 monte pendant le maintien. L'ordre des lettres n'a pas d'importance.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Énigme | [GameLogic/Enigmas/LsfEnigma.js](../GameLogic/Enigmas/LsfEnigma.js) |
 | Panneau | [UI/Panels/PanelLsf.js](../UI/Panels/PanelLsf.js) |
@@ -105,7 +104,7 @@ distingue — c'est le réglage le plus sensible de cette énigme.
 caméra regarde **laquelle est cachée** (par une main) et déplace un personnage dans un labyrinthe à
 l'écran. Rien ne dit quelle couleur fait quoi : c'est à l'équipe de le découvrir.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Énigme | [GameLogic/Enigmas/ColorsEnigma.js](../GameLogic/Enigmas/ColorsEnigma.js) |
 | Panneau | [UI/Panels/PanelColors.js](../UI/Panels/PanelColors.js) |
@@ -169,7 +168,7 @@ interrupteur, `G` grille. Un niveau sans `O` n'a qu'un personnage : aucun code �
 questions (passion, longueur de cheveux, taille) et annonce un nom. **Il se trompe volontairement** : il
 écarte d'emblée toutes les filles, alors que la coupable en est une.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Logique | [GameLogic/Help/ChatBot.js](../GameLogic/Help/ChatBot.js) |
 | Panneau | [UI/Panels/PanelChatbot.js](../UI/Panels/PanelChatbot.js) |
@@ -194,7 +193,7 @@ déjà désigné un coupable, lui, est conservé.
 **Pour le joueur.** L'équipe tape le prénom de la personne qu'elle accuse. La bonne réponse est
 **Elise** — la fille que le chatbot avait écartée.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Énigme | [GameLogic/Enigmas/GuiltyEnigma.js](../GameLogic/Enigmas/GuiltyEnigma.js) |
 | Panneau | [UI/Panels/PanelGuilty.js](../UI/Panels/PanelGuilty.js) |
@@ -222,7 +221,7 @@ l'attente à 10 s. (J'y avais pas pensé t'es un malin Opus)
 **Pour le joueur.** Une image s'affiche ; l'équipe doit y lire une adresse IP et la taper. **Deux essais
 seulement**, avec 5 secondes d'attente entre les deux.
 
-| Pièce | Fichier |
+| Élément | Fichier |
 |---|---|
 | Énigme | [GameLogic/Enigmas/FinalEnigma.js](../GameLogic/Enigmas/FinalEnigma.js) |
 | Panneau | [UI/Panels/PanelFinal.js](../UI/Panels/PanelFinal.js) |
