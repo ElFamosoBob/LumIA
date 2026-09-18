@@ -28,7 +28,7 @@ Les erreurs d'allumage sont traduites en message à l'écran par
 | « Caméra indisponible » | déjà utilisée (Zoom, autre onglet…) | fermer l'autre application, recharger |
 | « La caméra a été déconnectée » | câble débranché en cours de partie | rebrancher, recharger : la progression est sauvegardée |
 
-Avec plusieurs caméras, le navigateur prend celle choisie par l'utilisateur quand il accepte de donner accès au flux vidéo (après avoir cliquer sur )
+Avec plusieurs caméras, le navigateur prend celle choisie par l'utilisateur quand il accepte de donner accès au flux vidéo (après avoir cliquer sur le bouton "allumer la caméra").
 
 ## 3. La détection échoue
 
