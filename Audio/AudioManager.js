@@ -1,7 +1,7 @@
 import { playTabUnlockingSound } from './Sounds/TabUnlockingSound.js';
 import { playMysteriousSwell } from './Sounds/MysteriousSwell.js';
 import { RisingHarmony } from './Sounds/RisingHarmony.js';
-import { playUnlockChime } from './Sounds/UnlockChime.js';
+import { playSucceedingEnigma } from './Sounds/SucceedingEnigma.js';
 
 /**
  * Point d'entrée unique de tout ce qui fait du son.
@@ -80,7 +80,7 @@ class AudioManager {
 
     playEnigmaSuccess() {
         const ctx = this.getContext();
-        if (ctx) playUnlockChime(ctx, this.master);
+        if (ctx) playSucceedingEnigma(ctx, this.master);
     }
 
     // --- Son maintenu ---

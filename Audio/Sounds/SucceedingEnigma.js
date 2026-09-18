@@ -20,7 +20,7 @@ const TOTAL_DURATION = LANDING_TIME + LANDING_DECAY + 0.1;
  * @param {AudioContext} ctx
  * @param {AudioNode} destination - la sortie du AudioManager (volume général)
  */
-export function playUnlockChime(ctx, destination) {
+export function playSucceedingEnigma(ctx, destination) {
     const t0 = ctx.currentTime;
 
     addClick(ctx, t0, destination);
@@ -84,4 +84,4 @@ function addClick(ctx, t0, destination) {
     noise.onended = () => envelope.disconnect();
 }
 
-export const UNLOCK_CHIME_DURATION = TOTAL_DURATION;
+export const SUCCEEDING_ENIGMA_DURATION = TOTAL_DURATION;
