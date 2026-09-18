@@ -14,8 +14,10 @@ export class Timer {
         this.startTime = null;
         this.interval = null;
         this.onTimeOver = onTimeOver;
+        this.pausedAt = null; //moment où la fenêtre a perdu le focus, null si elle est active
 
         this.addEventListenerForAddTimeCheat();
+        this.addEventListenerForWindowFocus();
     }
 
     /**
@@ -59,12 +61,29 @@ export class Timer {
     }
 
     /**
+     * Le chrono ne décompte que lorsque la fenêtre est active : on fige le temps à la perte du
+     * focus, puis on recule startTime de la durée d'absence quand la fenêtre redevient active.
+     */
+    addEventListenerForWindowFocus() {
+        window.addEventListener('blur', () => {
+            if (this.interval) this.pausedAt = Date.now();
+        });
+        window.addEventListener('focus', () => {
+            if (this.pausedAt === null) return;
+
+            this.startTime += Date.now() - this.pausedAt;
+            this.pausedAt = null;
+        });
+    }
+
+    /**
      * We calculate the time like that because if we decrement every time, it could derive and not be 100% precise. This way it should be precise.
      */
     getRemainingMs() {
         if (this.startTime === null) return MISSION_DURATION_MS;
 
-        return Math.max(0, MISSION_DURATION_MS - (Date.now() - this.startTime));
+        const now = this.pausedAt ?? Date.now(); //fenêtre inactive : le temps reste figé
+        return Math.max(0, MISSION_DURATION_MS - (now - this.startTime));
     }
 
     tick() {
