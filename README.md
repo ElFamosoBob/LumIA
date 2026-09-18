@@ -1,4 +1,4 @@
-# Lum'IA
+# LumIA
 
 Un escape game d'une heure, joué dans un navigateur devant une webcam. Une équipe résout des
 énigmes, certaines en disposant des objets physiques que la caméra lit (vision par ordinateur),
