@@ -247,46 +247,6 @@ export class ColorsRecognizer {
     }
 
     /**
-     * Write HSV values of a the circle
-     */
-    drawCircleLabel(circle, x, y, radius, scale) {
-        const text = `${circle.name} H${circle.hue} S${circle.saturation} V${circle.value} ${Math.round(circle.consensus * 100)}%`;
-
-        const height = 18 * scale;
-        const width = this.ctx.measureText(text).width + 8 * scale;
-
-        const above = y - radius - height - 2 * scale;
-        const top = above > 0 ? above : y + radius + 2 * scale;
-
-        const half = width / 2;
-        const middle = Math.min(Math.max(x, half), this.canvas.width - half);
-
-        this.ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-        this.ctx.fillRect(middle - half, top, width, height);
-
-        this.ctx.fillStyle = circle.name === "Unknown" ? "#FF9500" : "#00FF00";
-        this.ctx.fillText(text, middle, top + height - 4 * scale);
-    }
-
-    /**
-     * gap between the actuel teint and the referance. if Over MAX_HUE_GAP the colors is unknown
-     */
-    gapToClosestReference(hue) {
-        let smallest = 180;
-        let closest = "-";
-
-        for (const reference of COLOR_REFERENCES) {
-            const gap = this.hueDistance(hue, reference.hue);
-            if (gap < smallest) {
-                smallest = gap;
-                closest = reference.name;
-            }
-        }
-
-        return `${closest} +/- ${smallest}`;
-    }
-
-    /**
      * Identifies a circle color by looking at a small sample circle around the middle of the circle
      *
      * We make each pixel of the sample vote to see which color is detected as the main one => supposedly the color of the circle
